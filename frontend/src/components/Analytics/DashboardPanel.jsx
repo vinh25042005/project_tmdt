@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { Users, DollarSign, TrendingUp, Smartphone, Award } from 'lucide-react';
 import { api } from '../../api/client';
 
-export default function DashboardPanel({ onSelectProvince }) {
+export default function DashboardPanel({ onSelectProvince, selectedRegion = null }) {
   const [summary, setSummary] = useState(null);
   const [rankings, setRankings] = useState([]);
   const [metric, setMetric] = useState('market_score');
@@ -11,14 +11,14 @@ export default function DashboardPanel({ onSelectProvince }) {
 
   useEffect(() => {
     loadData();
-  }, [metric]);
+  }, [metric, selectedRegion]);
 
   const loadData = async () => {
     setLoading(true);
     try {
       const [sumRes, rankRes] = await Promise.all([
-        api.getNationalSummary(),
-        api.getRanking(metric, 10)
+        api.getNationalSummary(selectedRegion),
+        api.getRanking(metric, 10, 'desc', selectedRegion)
       ]);
       setSummary(sumRes.data.summary);
       setRankings(rankRes.data || []);
@@ -56,7 +56,7 @@ export default function DashboardPanel({ onSelectProvince }) {
         <div className="stat-grid">
           <div className="stat-card">
             <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Users size={12} color="#38bdf8" /> Tổng Dân Số VN
+              <Users size={12} color="#38bdf8" /> Dân Số {selectedRegion ? `(${selectedRegion})` : 'Toàn Quốc'}
             </div>
             <div className="stat-value">
               {Number(summary.total_population || 0).toLocaleString()}
@@ -76,7 +76,7 @@ export default function DashboardPanel({ onSelectProvince }) {
 
           <div className="stat-card">
             <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <TrendingUp size={12} color="#f59e0b" /> Tổng GRDP 63 Tỉnh
+              <TrendingUp size={12} color="#f59e0b" /> Tổng GRDP {selectedRegion ? `(${selectedRegion})` : '63 Tỉnh'}
             </div>
             <div className="stat-value">
               {(Number(summary.total_gdp_billion_vnd || 0) / 1000000).toFixed(1)} triệu tỷ
@@ -100,7 +100,7 @@ export default function DashboardPanel({ onSelectProvince }) {
       <div className="layer-group">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <div className="layer-group-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Award size={14} /> Top 10 Thị Trường
+            <Award size={14} /> Top Thị Trường {selectedRegion ? `(${selectedRegion})` : ''}
           </div>
           <select
             className="metric-select"

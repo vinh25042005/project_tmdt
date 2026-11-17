@@ -32,12 +32,34 @@ export default function LayerControl({
         </select>
 
         {/* Region Filter */}
-        <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: 6 }}>
-          Lọc Theo Vùng Kinh Tế:
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+            Lọc Theo Vùng Kinh Tế:
+          </div>
+          {selectedRegion && (
+            <button
+              onClick={() => onRegionChange(null)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#38bdf8',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                padding: 0,
+                textDecoration: 'underline'
+              }}
+            >
+              Xóa lọc
+            </button>
+          )}
         </div>
         <select
           className="metric-select"
-          style={{ width: '100%' }}
+          style={{
+            width: '100%',
+            borderColor: selectedRegion ? '#38bdf8' : undefined,
+            backgroundColor: selectedRegion ? 'rgba(56, 189, 248, 0.08)' : undefined
+          }}
           value={selectedRegion || ''}
           onChange={(e) => onRegionChange(e.target.value || null)}
         >
@@ -73,7 +95,7 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#94a3b8' }} />
+            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#38bdf8' }} />
             Quận / Huyện (708 quận/huyện)
           </span>
           <label className="toggle-switch">
@@ -88,7 +110,7 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#6366f1' }} />
+            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#c084fc' }} />
             Xã / Phường / Thị Trấn
           </span>
           <label className="toggle-switch">

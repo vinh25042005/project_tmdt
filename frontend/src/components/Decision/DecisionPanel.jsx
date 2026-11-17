@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Target, Sliders, ChevronRight, Sparkles, Compass } from 'lucide-react';
 import { api } from '../../api/client';
 
-export default function DecisionPanel({ onSelectProvince }) {
+export default function DecisionPanel({ onSelectProvince, selectedRegion = null }) {
   const [weights, setWeights] = useState({
     population: 0.25,
     income: 0.25,
@@ -16,12 +16,12 @@ export default function DecisionPanel({ onSelectProvince }) {
 
   useEffect(() => {
     fetchRecommendations();
-  }, [weights]);
+  }, [weights, selectedRegion]);
 
   const fetchRecommendations = async () => {
     setLoading(true);
     try {
-      const res = await api.getRecommendations(weights, null, 10);
+      const res = await api.getRecommendations(weights, selectedRegion, 10);
       setRecommendations(res.data.recommendations || []);
     } catch (err) {
       console.error('Decision load error:', err);
@@ -154,7 +154,7 @@ export default function DecisionPanel({ onSelectProvince }) {
       {/* Target Market Recommendations */}
       <div className="layer-group">
         <div className="layer-group-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Sparkles size={14} color="#f59e0b" /> Thị Trường Đề Xuất Ưu Tiên
+          <Sparkles size={14} color="#f59e0b" /> Thị Trường Đề Xuất Ưu Tiên {selectedRegion ? `(${selectedRegion})` : ''}
         </div>
 
         {recommendations.map((item, idx) => (

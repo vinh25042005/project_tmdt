@@ -57,6 +57,9 @@ export default function App() {
     }
     if (item.type === 'province') {
       setSelectedProvinceCode(item.code);
+      if (selectedRegion && item.region && item.region !== selectedRegion) {
+        setSelectedRegion(null);
+      }
     }
   };
 
@@ -133,12 +136,14 @@ export default function App() {
 
           {activeTab === 'analytics' && (
             <DashboardPanel
+              selectedRegion={selectedRegion}
               onSelectProvince={(code) => setSelectedProvinceCode(code)}
             />
           )}
 
           {activeTab === 'decision' && (
             <DecisionPanel
+              selectedRegion={selectedRegion}
               onSelectProvince={(code) => setSelectedProvinceCode(code)}
             />
           )}
@@ -174,7 +179,7 @@ export default function App() {
 
       {/* Main Map View */}
       <main className="map-container">
-        {/* Floating Quick Metric Switcher */}
+        {/* Floating Quick Metric Switcher & Region Filter Badge */}
         <div className="map-top-bar">
           <div className="metric-selector-card">
             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Chỉ số hiển thị:</span>
@@ -188,12 +193,47 @@ export default function App() {
               ))}
             </select>
           </div>
+
+          {selectedRegion && (
+            <div
+              className="metric-selector-card"
+              style={{
+                borderColor: 'rgba(56, 189, 248, 0.4)',
+                background: 'rgba(15, 23, 42, 0.9)'
+              }}
+            >
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Vùng:</span>
+              <strong style={{ fontSize: '0.82rem', color: '#38bdf8' }}>{selectedRegion}</strong>
+              <button
+                onClick={() => setSelectedRegion(null)}
+                title="Bỏ lọc vùng kinh tế"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  color: '#cbd5e1',
+                  width: 18,
+                  height: 18,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '11px',
+                  lineHeight: 1,
+                  marginLeft: 4
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         <MapErrorBoundary>
           <MapView
             selectedMetric={selectedMetric}
             activeLayers={activeLayers}
+            selectedRegion={selectedRegion}
             focusLocation={focusLocation}
             onSelectProvince={(code) => setSelectedProvinceCode(code)}
           />

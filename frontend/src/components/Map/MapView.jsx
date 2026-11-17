@@ -61,6 +61,7 @@ function getColor(val, metric) {
 
 export default function MapView({
   selectedMetric = 'market_score',
+  selectedRegion = null,
   onSelectProvince,
   activeLayers = { provinces: true, districts: false, wards: false },
   focusLocation
@@ -68,9 +69,11 @@ export default function MapView({
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const provincesLayerRef = useRef(null);
+  const provincesBgLayerRef = useRef(null);
   const districtsLayerRef = useRef(null);
   const wardsLayerRef = useRef(null);
   const geojsonCache = useRef({ provinces: null, districts: null, wards: null });
+  const prevRegionRef = useRef(selectedRegion);
   const [loading, setLoading] = useState(true);
 
   // Initialize Leaflet Map
@@ -98,6 +101,20 @@ export default function MapView({
       maxZoom: 16
     }).addTo(map);
 
+    // Custom panes for clean stacking order
+    if (!map.getPane('provincesPane')) {
+      const pPane = map.createPane('provincesPane');
+      pPane.style.zIndex = 400;
+    }
+    if (!map.getPane('districtsPane')) {
+      const dPane = map.createPane('districtsPane');
+      dPane.style.zIndex = 450;
+    }
+    if (!map.getPane('wardsPane')) {
+      const wPane = map.createPane('wardsPane');
+      wPane.style.zIndex = 500;
+    }
+
     mapRef.current = map;
 
     // Load provinces GeoJSON from backend
@@ -114,7 +131,7 @@ export default function MapView({
       setLoading(true);
       const res = await api.getProvincesGeoJSON();
       geojsonCache.current.provinces = res.data;
-      renderProvincesLayer(res.data, selectedMetric);
+      renderProvincesLayer(res.data, selectedMetric, selectedRegion);
     } catch (err) {
       console.error('Failed to load provinces GeoJSON:', err);
     } finally {
@@ -122,24 +139,52 @@ export default function MapView({
     }
   };
 
-  const renderProvincesLayer = (geojson, metric) => {
+  const renderProvincesLayer = (geojson, metric, region) => {
     const map = mapRef.current;
     const L = window.L;
     if (!map || !L || !geojson) return;
 
     if (provincesLayerRef.current) {
       map.removeLayer(provincesLayerRef.current);
+      provincesLayerRef.current = null;
+    }
+    if (provincesBgLayerRef.current) {
+      map.removeLayer(provincesBgLayerRef.current);
+      provincesBgLayerRef.current = null;
     }
 
+    // 1. If a region is filtered, render non-matching provinces as subtle dark background
+    if (region) {
+      const bgLayer = L.geoJSON(geojson, {
+        pane: 'provincesPane',
+        filter: (feature) => feature.properties.region !== region,
+        style: {
+          fillColor: '#0f172a',
+          fillOpacity: 0.35,
+          weight: 0.8,
+          color: '#334155',
+          opacity: 0.5
+        },
+        interactive: false
+      });
+      if (activeLayers.provinces) {
+        bgLayer.addTo(map);
+      }
+      provincesBgLayerRef.current = bgLayer;
+    }
+
+    // 2. Active choropleth layer for matching provinces
     const layer = L.geoJSON(geojson, {
+      pane: 'provincesPane',
+      filter: (feature) => !region || feature.properties.region === region,
       style: (feature) => {
         const val = feature.properties[metric];
         return {
           fillColor: getColor(val, metric),
-          weight: 1.2,
-          opacity: 0.8,
+          weight: region ? 1.6 : 1.2,
+          opacity: 0.9,
           color: '#ffffff',
-          fillOpacity: 0.75
+          fillOpacity: 0.8
         };
       },
       onEachFeature: (feature, l) => {
@@ -150,7 +195,7 @@ export default function MapView({
             tgt.setStyle({
               weight: 3,
               color: '#38bdf8',
-              fillOpacity: 0.9
+              fillOpacity: 0.95
             });
             tgt.bringToFront();
 
@@ -187,9 +232,9 @@ export default function MapView({
             const val = feature.properties[metric];
             tgt.setStyle({
               fillColor: getColor(val, metric),
-              weight: 1.2,
+              weight: region ? 1.6 : 1.2,
               color: '#ffffff',
-              fillOpacity: 0.75
+              fillOpacity: 0.8
             });
           },
           click: () => {
@@ -205,16 +250,185 @@ export default function MapView({
       layer.addTo(map);
     }
     provincesLayerRef.current = layer;
+
+    // Handle smooth camera movement when region changes
+    if (prevRegionRef.current !== region) {
+      if (region && layer.getLayers().length > 0) {
+        const bounds = layer.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 9, animate: true });
+        }
+      } else if (!region && prevRegionRef.current) {
+        map.flyTo([16.0, 107.5], 6, { animate: true, duration: 1 });
+      }
+      prevRegionRef.current = region;
+    }
   };
 
-  // Update styles when metric changes
+  const renderDistrictsLayer = (geojson, isProvincesOn, region) => {
+    const map = mapRef.current;
+    const L = window.L;
+    if (!map || !L || !geojson) return;
+
+    if (districtsLayerRef.current) {
+      map.removeLayer(districtsLayerRef.current);
+      districtsLayerRef.current = null;
+    }
+
+    const baseStyle = isProvincesOn
+      ? {
+          color: 'rgba(255, 255, 255, 0.75)',
+          weight: 1.2,
+          dashArray: '3, 3',
+          fillColor: '#38bdf8',
+          fillOpacity: 0.05,
+          opacity: 0.85
+        }
+      : {
+          color: '#38bdf8',
+          weight: 1.4,
+          dashArray: '',
+          fillColor: '#0284c7',
+          fillOpacity: 0.25,
+          opacity: 0.95
+        };
+
+    const dLayer = L.geoJSON(geojson, {
+      pane: 'districtsPane',
+      filter: (feature) => {
+        if (!region) return true;
+        return feature.properties.region === region;
+      },
+      style: () => baseStyle,
+      onEachFeature: (feat, l) => {
+        const p = feat.properties;
+        l.on({
+          mouseover: (e) => {
+            const tgt = e.target;
+            tgt.setStyle({
+              weight: 2.8,
+              color: isProvincesOn ? '#38bdf8' : '#fbbf24',
+              dashArray: '',
+              fillColor: isProvincesOn ? '#38bdf8' : '#f59e0b',
+              fillOpacity: 0.45
+            });
+            tgt.bringToFront();
+
+            tgt.bindTooltip(`
+              <div style="font-family: inherit; font-size: 12px; line-height: 1.4; color: #f8fafc; padding: 4px;">
+                <div style="font-weight: 700; font-size: 14px; color: #38bdf8; margin-bottom: 2px;">
+                  ${p.name || ''}
+                </div>
+                <div style="color: #94a3b8; font-size: 11px; margin-bottom: 4px;">
+                  ${p.province_name ? `Thuộc: ${p.province_name}` : 'Quận / Huyện'} ${p.region ? `• ${p.region}` : ''}
+                </div>
+                <div style="font-size: 11px; color: #cbd5e1;">
+                  Cấp hành chính: <strong style="color: #f59e0b;">Quận / Huyện</strong>
+                </div>
+              </div>
+            `, {
+              sticky: true,
+              className: 'custom-leaflet-tooltip'
+            }).openTooltip();
+          },
+          mouseout: (e) => {
+            const tgt = e.target;
+            tgt.setStyle(baseStyle);
+          },
+          click: () => {
+            if (l.getBounds && l.getBounds().isValid()) {
+              map.fitBounds(l.getBounds(), { padding: [50, 50], maxZoom: 12, animate: true });
+            }
+          }
+        });
+      }
+    });
+
+    if (activeLayers.districts) {
+      dLayer.addTo(map);
+    }
+    districtsLayerRef.current = dLayer;
+  };
+
+  const renderWardsLayer = (geojson) => {
+    const map = mapRef.current;
+    const L = window.L;
+    if (!map || !L || !geojson) return;
+
+    if (wardsLayerRef.current) {
+      map.removeLayer(wardsLayerRef.current);
+      wardsLayerRef.current = null;
+    }
+
+    const baseStyle = {
+      color: '#c084fc',
+      weight: 1.0,
+      fillColor: '#8b5cf6',
+      fillOpacity: 0.28,
+      opacity: 0.85
+    };
+
+    const wLayer = L.geoJSON(geojson, {
+      pane: 'wardsPane',
+      style: () => baseStyle,
+      onEachFeature: (feat, l) => {
+        const p = feat.properties;
+        l.on({
+          mouseover: (e) => {
+            const tgt = e.target;
+            tgt.setStyle({
+              weight: 2.5,
+              color: '#f43f5e',
+              fillColor: '#f43f5e',
+              fillOpacity: 0.5
+            });
+            tgt.bringToFront();
+
+            tgt.bindTooltip(`
+              <div style="font-family: inherit; font-size: 12px; line-height: 1.4; color: #f8fafc; padding: 4px;">
+                <div style="font-weight: 700; font-size: 13px; color: #c084fc; margin-bottom: 2px;">
+                  ${p.ward_type || 'Xã/Phường'} ${p.name || ''}
+                </div>
+                <div style="color: #94a3b8; font-size: 11px; margin-bottom: 4px;">
+                  ${p.province_name ? `Thuộc: ${p.province_name}` : ''}
+                </div>
+                <div style="font-size: 11px; color: #cbd5e1;">
+                  Dân số: <strong style="color: #38bdf8;">${Number(p.population || 0).toLocaleString()} ng</strong>
+                </div>
+                ${p.density ? `<div style="font-size: 11px; color: #cbd5e1;">Mật độ: <strong>${Number(p.density).toLocaleString()} ng/km²</strong></div>` : ''}
+              </div>
+            `, {
+              sticky: true,
+              className: 'custom-leaflet-tooltip'
+            }).openTooltip();
+          },
+          mouseout: (e) => {
+            const tgt = e.target;
+            tgt.setStyle(baseStyle);
+          },
+          click: () => {
+            if (l.getBounds && l.getBounds().isValid()) {
+              map.fitBounds(l.getBounds(), { padding: [50, 50], maxZoom: 14, animate: true });
+            }
+          }
+        });
+      }
+    });
+
+    if (activeLayers.wards) {
+      wLayer.addTo(map);
+    }
+    wardsLayerRef.current = wLayer;
+  };
+
+  // Update styles when metric or region changes
   useEffect(() => {
     if (geojsonCache.current.provinces) {
-      renderProvincesLayer(geojsonCache.current.provinces, selectedMetric);
+      renderProvincesLayer(geojsonCache.current.provinces, selectedMetric, selectedRegion);
     }
-  }, [selectedMetric]);
+  }, [selectedMetric, selectedRegion]);
 
-  // Handle Layer toggles (provinces, districts, wards)
+  // Handle Layer toggles (provinces, districts, wards) and region filter
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !window.L) return;
@@ -223,8 +437,10 @@ export default function MapView({
     if (provincesLayerRef.current) {
       if (activeLayers.provinces) {
         if (!map.hasLayer(provincesLayerRef.current)) provincesLayerRef.current.addTo(map);
+        if (provincesBgLayerRef.current && !map.hasLayer(provincesBgLayerRef.current)) provincesBgLayerRef.current.addTo(map);
       } else {
         if (map.hasLayer(provincesLayerRef.current)) map.removeLayer(provincesLayerRef.current);
+        if (provincesBgLayerRef.current && map.hasLayer(provincesBgLayerRef.current)) map.removeLayer(provincesBgLayerRef.current);
       }
     }
 
@@ -233,23 +449,10 @@ export default function MapView({
       if (!geojsonCache.current.districts) {
         api.getDistrictsGeoJSON().then((res) => {
           geojsonCache.current.districts = res.data;
-          const dLayer = window.L.geoJSON(res.data, {
-            style: {
-              color: '#94a3b8',
-              weight: 1,
-              dashArray: '3, 3',
-              fillOpacity: 0.1,
-              fillColor: '#64748b'
-            },
-            onEachFeature: (feat, l) => {
-              l.bindTooltip(feat.properties.name || '', { sticky: true });
-            }
-          });
-          districtsLayerRef.current = dLayer;
-          if (activeLayers.districts) dLayer.addTo(map);
+          renderDistrictsLayer(res.data, activeLayers.provinces, selectedRegion);
         });
-      } else if (districtsLayerRef.current && !map.hasLayer(districtsLayerRef.current)) {
-        districtsLayerRef.current.addTo(map);
+      } else {
+        renderDistrictsLayer(geojsonCache.current.districts, activeLayers.provinces, selectedRegion);
       }
     } else if (districtsLayerRef.current && map.hasLayer(districtsLayerRef.current)) {
       map.removeLayer(districtsLayerRef.current);
@@ -260,28 +463,15 @@ export default function MapView({
       if (!geojsonCache.current.wards) {
         api.getWardsGeoJSON().then((res) => {
           geojsonCache.current.wards = res.data;
-          const wLayer = window.L.geoJSON(res.data, {
-            style: {
-              color: '#a855f7',
-              weight: 0.8,
-              fillOpacity: 0.35,
-              fillColor: '#8b5cf6'
-            },
-            onEachFeature: (feat, l) => {
-              const p = feat.properties;
-              l.bindTooltip(`${p.ward_type} ${p.name} (${Number(p.population).toLocaleString()} ng)`, { sticky: true });
-            }
-          });
-          wardsLayerRef.current = wLayer;
-          if (activeLayers.wards) wLayer.addTo(map);
+          renderWardsLayer(res.data);
         });
-      } else if (wardsLayerRef.current && !map.hasLayer(wardsLayerRef.current)) {
-        wardsLayerRef.current.addTo(map);
+      } else {
+        renderWardsLayer(geojsonCache.current.wards);
       }
     } else if (wardsLayerRef.current && map.hasLayer(wardsLayerRef.current)) {
       map.removeLayer(wardsLayerRef.current);
     }
-  }, [activeLayers]);
+  }, [activeLayers, selectedRegion]);
 
   // Handle focus fly-to from search
   useEffect(() => {

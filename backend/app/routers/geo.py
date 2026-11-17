@@ -171,6 +171,7 @@ def get_provinces_geojson(db: Session = Depends(get_db)):
 @router.get("/geojson/districts")
 def get_districts_geojson(
     province_id: str = Query(None),
+    region: str = Query(None),
     limit: int = Query(750),
     db: Session = Depends(get_db)
 ):
@@ -180,19 +181,37 @@ def get_districts_geojson(
             'features', COALESCE(json_agg(
                 json_build_object(
                     'type', 'Feature',
-                    'geometry', ST_AsGeoJSON(geom)::json,
+                    'geometry', ST_AsGeoJSON(sub.geom)::json,
                     'properties', json_build_object(
-                        'id', id,
-                        'district_id', district_id,
-                        'name', name,
-                        'district_type', district_type
+                        'id', sub.id,
+                        'district_id', sub.district_id,
+                        'name', sub.name,
+                        'district_type', sub.district_type,
+                        'province_code', sub.province_code,
+                        'province_name', sub.province_name,
+                        'region', sub.region
                     )
                 )
             ), '[]'::json)
         )::text
-        FROM (SELECT * FROM admin_districts LIMIT :limit) d;
+        FROM (
+            SELECT 
+                d.id,
+                d.district_id,
+                d.name,
+                d.district_type,
+                d.geom,
+                p.province_code,
+                COALESCE(p.name, 'Việt Nam') as province_name,
+                COALESCE(p.region, 'Việt Nam') as region
+            FROM admin_districts d
+            LEFT JOIN v_provinces_market p ON ST_Intersects(ST_PointOnSurface(d.geom), p.geom)
+            WHERE (:prov_id IS NULL OR p.province_code = :prov_id)
+              AND (:region IS NULL OR p.region = :region)
+            LIMIT :limit
+        ) sub;
     """
-    geojson_str = db.execute(text(sql), {"limit": limit}).scalar()
+    geojson_str = db.execute(text(sql), {"prov_id": province_id, "region": region, "limit": limit}).scalar()
     return Response(content=geojson_str or '{"type":"FeatureCollection","features":[]}', media_type="application/json")
 
 @router.get("/geojson/wards")

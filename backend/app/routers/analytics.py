@@ -6,7 +6,10 @@ from app.database import get_db
 router = APIRouter(prefix="/api/analytics", tags=["Market Analytics"])
 
 @router.get("/summary")
-def get_national_summary(db: Session = Depends(get_db)):
+def get_national_summary(
+    region: str = Query(None, description="Filter summary by economic region"),
+    db: Session = Depends(get_db)
+):
     sql = """
         SELECT 
             COUNT(*) as total_provinces,
@@ -22,15 +25,24 @@ def get_national_summary(db: Session = Depends(get_db)):
         FROM v_provinces_market
         WHERE province_code IS NOT NULL AND province_code != ''
     """
-    summary = db.execute(text(sql)).mappings().first()
+    params = {}
+    if region:
+        sql += " AND region = :region"
+        params["region"] = region
+    summary = db.execute(text(sql), params).mappings().first()
 
     top_markets_sql = """
         SELECT province_code, name, region, population, gdp_billion_vnd, market_score
         FROM v_provinces_market
+        WHERE province_code IS NOT NULL AND province_code != ''
+    """
+    if region:
+        top_markets_sql += " AND region = :region"
+    top_markets_sql += """
         ORDER BY market_score DESC
         LIMIT 5
     """
-    top_markets = db.execute(text(top_markets_sql)).mappings().all()
+    top_markets = db.execute(text(top_markets_sql), params).mappings().all()
 
     return {
         "summary": dict(summary) if summary else {},
@@ -40,6 +52,7 @@ def get_national_summary(db: Session = Depends(get_db)):
 @router.get("/ranking")
 def get_ranking(
     metric: str = Query("market_score", description="Metric to rank: market_score, population, gdp_billion_vnd, per_capita_income_million_vnd, ecommerce_index, retail_sales_billion_vnd"),
+    region: str = Query(None, description="Filter ranking by economic region"),
     top: int = Query(10, ge=3, le=63),
     order: str = Query("desc", description="desc or asc"),
     db: Session = Depends(get_db)
@@ -72,10 +85,16 @@ def get_ranking(
             market_score
         FROM v_provinces_market
         WHERE province_code IS NOT NULL AND province_code != ''
+    """
+    params = {"top": top}
+    if region:
+        sql += " AND region = :region"
+        params["region"] = region
+    sql += f"""
         ORDER BY {col} {order_dir}
         LIMIT :top
     """
-    rows = db.execute(text(sql), {"top": top}).mappings().all()
+    rows = db.execute(text(sql), params).mappings().all()
     return [dict(r) for r in rows]
 
 @router.get("/compare")

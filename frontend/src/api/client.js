@@ -24,19 +24,19 @@ export const api = {
   searchNearby: (lat, lng, radius_km = 50) => client.get('/api/search/nearby', { params: { lat, lng, radius_km } }),
 
   // Analytics
-  getNationalSummary: () => client.get('/api/analytics/summary'),
-  getRanking: (metric, top = 10, order = 'desc') => client.get('/api/analytics/ranking', { params: { metric, top, order } }),
+  getNationalSummary: (region = null) => client.get('/api/analytics/summary', { params: region ? { region } : {} }),
+  getRanking: (metric, top = 10, order = 'desc', region = null) => client.get('/api/analytics/ranking', { params: { metric, top, order, ...(region ? { region } : {}) } }),
   compareProvinces: (codes) => client.get('/api/analytics/compare', { params: { codes } }),
   getDistribution: (by = 'region') => client.get('/api/analytics/distribution', { params: { by } }),
 
   // Decision Support
-  getRecommendations: (weights, region, top = 10) => client.get('/api/decision/recommendations', {
+  getRecommendations: (weights, region = null, top = 10) => client.get('/api/decision/recommendations', {
     params: {
       w_pop: weights.population,
       w_income: weights.income,
       w_ecom: weights.ecommerce,
       w_urban: weights.urbanization,
-      region,
+      ...(region ? { region } : {}),
       top
     }
   }),
