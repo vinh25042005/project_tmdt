@@ -193,8 +193,8 @@ export default function MapView({
           mouseover: (e) => {
             const tgt = e.target;
             tgt.setStyle({
-              weight: 3,
-              color: '#38bdf8',
+              weight: 2.5,
+              color: '#00e5ff',
               fillOpacity: 0.95
             });
             tgt.bringToFront();
@@ -280,12 +280,12 @@ export default function MapView({
           color: 'rgba(255, 255, 255, 0.75)',
           weight: 1.2,
           dashArray: '3, 3',
-          fillColor: '#38bdf8',
+          fillColor: '#00e5ff',
           fillOpacity: 0.05,
           opacity: 0.85
         }
       : {
-          color: '#38bdf8',
+          color: '#00e5ff',
           weight: 1.4,
           dashArray: '',
           fillColor: '#0284c7',

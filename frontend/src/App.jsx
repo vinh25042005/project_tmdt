@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Map, BarChart2, Compass, Layers, ArrowRightLeft } from 'lucide-react';
+import { Map, BarChart2, Compass, Layers, ArrowRightLeft, Radio } from 'lucide-react';
 import MapView, { METRIC_CONFIG } from './components/Map/MapView';
 import MapErrorBoundary from './components/Map/ErrorBoundary';
 import SearchPanel from './components/Sidebar/SearchPanel';
@@ -75,23 +75,27 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Left Sidebar */}
+      {/* Left Command Sidebar */}
       <aside className="sidebar">
         {/* Brand Header */}
         <div className="sidebar-header">
           <div>
             <div className="brand-title">
-              <span>🇻🇳 VN-MarketMap</span>
-              <span className="brand-badge">GIS Platform</span>
+              <span>VN-MarketMap</span>
+              <span className="brand-badge">GIS v2.4</span>
             </div>
             <div className="brand-sub">
-              Hệ thống Thấu Hiểu Thị Trường & Khách Hàng Việt Nam
+              Hệ thống Thấu Hiểu Thị Trường & Không Gian Bán Lẻ
             </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.68rem', color: '#10b981', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.8)' }} />
+            <span>ONLINE</span>
           </div>
         </div>
 
         {/* Global Search Bar */}
-        <div style={{ padding: '14px 20px 0 20px' }}>
+        <div style={{ padding: '14px 18px 0 18px' }}>
           <SearchPanel onSelectLocation={handleSelectLocation} />
         </div>
 
@@ -101,22 +105,22 @@ export default function App() {
             className={`tab-btn ${activeTab === 'layers' ? 'active' : ''}`}
             onClick={() => setActiveTab('layers')}
           >
-            <Layers size={16} />
-            <span>Bản Đồ & Lớp</span>
+            <Layers size={15} />
+            <span>Lớp Bản Đồ</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
             onClick={() => setActiveTab('analytics')}
           >
-            <BarChart2 size={16} />
-            <span>Thống Kê Thị Trường</span>
+            <BarChart2 size={15} />
+            <span>Phân Tích</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'decision' ? 'active' : ''}`}
             onClick={() => setActiveTab('decision')}
           >
-            <Compass size={16} />
-            <span>Hỗ Trợ Ra Quyết Định</span>
+            <Compass size={15} />
+            <span>Quyết Định</span>
           </button>
         </div>
 
@@ -151,40 +155,51 @@ export default function App() {
 
         {/* Bottom Bar: Compare shortcut */}
         {compareCodes.length > 0 && (
-          <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', background: '#1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
-              Đang chọn: <strong>{compareCodes.length} tỉnh</strong>
+          <div style={{
+            padding: '12px 18px',
+            borderTop: '1px solid var(--border-subtle)',
+            background: 'var(--bg-surface-elevated)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+              Đã ghim: <strong style={{ color: '#00e5ff' }}>{compareCodes.length} tỉnh/thành</strong>
             </span>
             <button
               onClick={() => setShowComparison(true)}
               style={{
-                background: '#38bdf8',
-                color: '#0f172a',
+                background: '#00e5ff',
+                color: '#090d16',
                 border: 'none',
-                borderRadius: 6,
+                borderRadius: 'var(--radius-sm)',
                 padding: '6px 12px',
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 4
+                gap: 5,
+                boxShadow: '0 0 12px rgba(0,229,255,0.4)',
+                transition: 'all 0.15s ease'
               }}
             >
-              <ArrowRightLeft size={14} /> Mở So Sánh
+              <ArrowRightLeft size={13} />
+              <span>So Sánh Chi Tiết</span>
             </button>
           </div>
         )}
       </aside>
 
-      {/* Main Map View */}
+      {/* Main Map Canvas */}
       <main className="map-container">
         {/* Floating Quick Metric Switcher & Region Filter Badge */}
         <div className="map-top-bar">
           <div className="metric-selector-card">
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Chỉ số hiển thị:</span>
+            <span style={{ fontSize: '0.76rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Chỉ số:</span>
             <select
               className="metric-select"
+              style={{ padding: '5px 10px', fontSize: '0.78rem' }}
               value={selectedMetric}
               onChange={(e) => setSelectedMetric(e.target.value)}
             >
@@ -198,17 +213,17 @@ export default function App() {
             <div
               className="metric-selector-card"
               style={{
-                borderColor: 'rgba(56, 189, 248, 0.4)',
-                background: 'rgba(15, 23, 42, 0.9)'
+                borderColor: 'rgba(0, 229, 255, 0.4)',
+                background: 'rgba(13, 19, 33, 0.95)'
               }}
             >
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Vùng:</span>
-              <strong style={{ fontSize: '0.82rem', color: '#38bdf8' }}>{selectedRegion}</strong>
+              <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>Vùng:</span>
+              <strong style={{ fontSize: '0.8rem', color: '#00e5ff' }}>{selectedRegion}</strong>
               <button
                 onClick={() => setSelectedRegion(null)}
                 title="Bỏ lọc vùng kinh tế"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.12)',
+                  background: 'rgba(255, 255, 255, 0.1)',
                   border: 'none',
                   borderRadius: '50%',
                   color: '#cbd5e1',

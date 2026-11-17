@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Map, Eye } from 'lucide-react';
+import { Layers, Map, Filter, RotateCcw } from 'lucide-react';
 import { METRIC_CONFIG } from '../Map/MapView';
 
 export default function LayerControl({
@@ -15,12 +15,13 @@ export default function LayerControl({
     <div>
       {/* Metric Selection */}
       <div className="layer-group">
-        <div className="layer-group-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Map size={14} /> Lớp Trực Quan Hóa (Choropleth)
+        <div className="layer-group-title">
+          <Map size={14} color="#00e5ff" />
+          <span>Lớp Trực Quan Hóa (Choropleth GIS)</span>
         </div>
         <select
           className="metric-select"
-          style={{ width: '100%', marginBottom: 12 }}
+          style={{ width: '100%', marginBottom: 14 }}
           value={selectedMetric}
           onChange={(e) => onMetricChange(e.target.value)}
         >
@@ -33,8 +34,9 @@ export default function LayerControl({
 
         {/* Region Filter */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-            Lọc Theo Vùng Kinh Tế:
+          <div style={{ fontSize: '0.74rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Filter size={12} color="#94a3b8" />
+            <span>Phạm Vi Vùng Kinh Tế:</span>
           </div>
           {selectedRegion && (
             <button
@@ -42,31 +44,33 @@ export default function LayerControl({
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#38bdf8',
+                color: '#00e5ff',
                 fontSize: '0.72rem',
                 cursor: 'pointer',
-                padding: 0,
-                textDecoration: 'underline'
+                display: 'flex',
+                alignItems: 'center',
+                gap: 3,
+                padding: 0
               }}
             >
-              Xóa lọc
+              <RotateCcw size={11} />
+              <span>Toàn quốc</span>
             </button>
           )}
         </div>
         <select
           className="metric-select"
           style={{
-            width: '100%',
-            borderColor: selectedRegion ? '#38bdf8' : undefined,
-            backgroundColor: selectedRegion ? 'rgba(56, 189, 248, 0.08)' : undefined
+            borderColor: selectedRegion ? 'rgba(0, 229, 255, 0.4)' : undefined,
+            background: selectedRegion ? 'rgba(0, 229, 255, 0.06)' : undefined
           }}
           value={selectedRegion || ''}
           onChange={(e) => onRegionChange(e.target.value || null)}
         >
-          <option value="">Toàn Quốc (63 Tỉnh/Thành)</option>
+          <option value="">Toàn Quốc (63 Tỉnh / Thành phố)</option>
           {regions.map((r) => (
             <option key={r.region} value={r.region}>
-              {r.region} ({r.province_count} tỉnh)
+              {r.region} ({r.province_count} tỉnh thành)
             </option>
           ))}
         </select>
@@ -74,14 +78,16 @@ export default function LayerControl({
 
       {/* Administrative Boundary Layers */}
       <div className="layer-group">
-        <div className="layer-group-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Layers size={14} /> Các Lớp Ranh Giới Hành Chính
+        <div className="layer-group-title">
+          <Layers size={14} color="#00e5ff" />
+          <span>Ranh Giới Không Gian Đa Cấp</span>
         </div>
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#38bdf8' }} />
-            Tỉnh / Thành Phố (63 tỉnh)
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#00e5ff', boxShadow: '0 0 8px rgba(0,229,255,0.6)' }} />
+            <span>Tỉnh / Thành Phố</span>
+            <span style={{ fontSize: '0.68rem', color: '#64748b' }}>(63 đơn vị)</span>
           </span>
           <label className="toggle-switch">
             <input
@@ -95,8 +101,9 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#38bdf8' }} />
-            Quận / Huyện (708 quận/huyện)
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 8px rgba(245,158,11,0.6)' }} />
+            <span>Quận / Huyện</span>
+            <span style={{ fontSize: '0.68rem', color: '#64748b' }}>(708 đơn vị)</span>
           </span>
           <label className="toggle-switch">
             <input
@@ -110,8 +117,8 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#c084fc' }} />
-            Xã / Phường / Thị Trấn
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
+            <span>Xã / Phường / Thị Trấn</span>
           </span>
           <label className="toggle-switch">
             <input

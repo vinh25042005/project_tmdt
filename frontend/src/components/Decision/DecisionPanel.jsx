@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Sliders, ChevronRight, Sparkles, Compass } from 'lucide-react';
+import { Target, Sliders, ChevronRight, Sparkles, Compass, ShoppingCart, Package, Gem } from 'lucide-react';
 import { api } from '../../api/client';
 
 export default function DecisionPanel({ onSelectProvince, selectedRegion = null }) {
@@ -12,7 +12,7 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
 
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [preset, setPreset] = useState('ecommerce'); // 'ecommerce', 'fmcg', 'luxury'
+  const [preset, setPreset] = useState('ecommerce');
 
   useEffect(() => {
     fetchRecommendations();
@@ -53,35 +53,80 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
     <div>
       {/* Header and Explanation */}
       <div className="layer-group">
-        <div className="layer-group-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Target size={14} /> Công Cụ Hỗ Trợ Ra Quyết Định (MCDA)
+        <div className="layer-group-title">
+          <Target size={14} color="#00e5ff" />
+          <span>Hỗ Trợ Ra Quyết Định (MCDA Model)</span>
         </div>
-        <p style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: 1.4, marginBottom: 12 }}>
-          Động cơ phân tích đa tiêu chí (Multi-Criteria Decision Analysis) giúp doanh nghiệp chọn thị trường tối ưu dựa trên chiến lược kinh doanh riêng.
+        <p style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.45, marginBottom: 14 }}>
+          Mô hình đánh giá đa tiêu chí (MCDA) phân bổ trọng số động theo chiến lược mở rộng và định vị phân khúc khách hàng.
         </p>
 
         {/* Business Presets */}
-        <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 16 }}>
           <button
-            className={`tab-btn ${preset === 'ecommerce' ? 'active' : ''}`}
-            style={{ borderRadius: 6, padding: '6px 8px', fontSize: '0.72rem' }}
             onClick={() => applyPreset('ecommerce')}
+            style={{
+              padding: '8px 6px',
+              borderRadius: 6,
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: preset === 'ecommerce' ? '1px solid rgba(0, 229, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+              background: preset === 'ecommerce' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+              color: preset === 'ecommerce' ? '#00e5ff' : '#94a3b8',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              transition: 'all 0.18s ease'
+            }}
           >
-            🛒 TMĐT / Online
+            <ShoppingCart size={13} />
+            <span>TMĐT / Retail</span>
           </button>
+
           <button
-            className={`tab-btn ${preset === 'fmcg' ? 'active' : ''}`}
-            style={{ borderRadius: 6, padding: '6px 8px', fontSize: '0.72rem' }}
             onClick={() => applyPreset('fmcg')}
+            style={{
+              padding: '8px 6px',
+              borderRadius: 6,
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: preset === 'fmcg' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+              background: preset === 'fmcg' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+              color: preset === 'fmcg' ? '#f59e0b' : '#94a3b8',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              transition: 'all 0.18s ease'
+            }}
           >
-            📦 Tiêu Dùng FMCG
+            <Package size={13} />
+            <span>Tiêu Dùng FMCG</span>
           </button>
+
           <button
-            className={`tab-btn ${preset === 'luxury' ? 'active' : ''}`}
-            style={{ borderRadius: 6, padding: '6px 8px', fontSize: '0.72rem' }}
             onClick={() => applyPreset('luxury')}
+            style={{
+              padding: '8px 6px',
+              borderRadius: 6,
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: preset === 'luxury' ? '1px solid rgba(168, 85, 247, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+              background: preset === 'luxury' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+              color: preset === 'luxury' ? '#c084fc' : '#94a3b8',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+              transition: 'all 0.18s ease'
+            }}
           >
-            💎 Phân Khúc Cao Cấp
+            <Gem size={13} />
+            <span>Cao Cấp / Hạng Sang</span>
           </button>
         </div>
 
@@ -153,8 +198,9 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
 
       {/* Target Market Recommendations */}
       <div className="layer-group">
-        <div className="layer-group-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Sparkles size={14} color="#f59e0b" /> Thị Trường Đề Xuất Ưu Tiên {selectedRegion ? `(${selectedRegion})` : ''}
+        <div className="layer-group-title">
+          <Sparkles size={14} color="#f59e0b" />
+          <span>Thị Trường Đề Xuất Ưu Tiên {selectedRegion ? `(${selectedRegion})` : ''}</span>
         </div>
 
         {recommendations.map((item, idx) => (
@@ -173,15 +219,15 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
             <span
               className="recom-tier"
               style={{
-                backgroundColor: `${item.tier_color}22`,
+                backgroundColor: `${item.tier_color}18`,
                 color: item.tier_color,
-                border: `1px solid ${item.tier_color}55`
+                border: `1px solid ${item.tier_color}44`
               }}
             >
               {item.market_tier}
             </span>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#cbd5e1', marginBottom: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#94a3b8', marginBottom: 8 }}>
               <span>Dân số: {(item.population / 1000000).toFixed(1)}M</span>
               <span>Thu nhập: {item.per_capita_income_million_vnd} tr</span>
               <span>TMĐT: {item.ecommerce_index}</span>

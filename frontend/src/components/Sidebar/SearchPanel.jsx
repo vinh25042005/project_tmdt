@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search as SearchIcon, MapPin, Building, Home, X } from 'lucide-react';
+import { Search as SearchIcon, MapPin, Building2, Home, X, Compass } from 'lucide-react';
 import { api } from '../../api/client';
 
 export default function SearchPanel({ onSelectLocation }) {
@@ -29,7 +29,7 @@ export default function SearchPanel({ onSelectLocation }) {
       } finally {
         setLoading(false);
       }
-    }, 250);
+    }, 220);
 
     return () => clearTimeout(debounceRef.current);
   }, [query]);
@@ -48,30 +48,30 @@ export default function SearchPanel({ onSelectLocation }) {
   };
 
   const getIcon = (type) => {
-    if (type === 'province') return <Building size={16} className="text-sky-400" />;
-    if (type === 'district') return <MapPin size={16} className="text-amber-400" />;
-    return <Home size={16} className="text-emerald-400" />;
+    if (type === 'province') return <Building2 size={15} color="#00e5ff" />;
+    if (type === 'district') return <MapPin size={15} color="#f59e0b" />;
+    return <Home size={15} color="#10b981" />;
   };
 
   const getTypeLabel = (type) => {
-    if (type === 'province') return 'Tỉnh / TP';
-    if (type === 'district') return 'Quận / Huyện';
-    return 'Xã / Phường';
+    if (type === 'province') return 'Tỉnh/TP';
+    if (type === 'district') return 'Quận/Huyện';
+    return 'Xã/Phường';
   };
 
   return (
     <div className="search-container">
       <div className="search-input-wrap">
-        <SearchIcon size={16} className="search-icon" />
+        <SearchIcon size={15} className="search-icon" />
         <input
           type="text"
           className="search-input"
-          placeholder="Tìm tỉnh, huyện, xã (VD: Hà Nội, Đà Nẵng, Ba Đình...)"
+          placeholder="Tìm địa bàn, tỉnh, huyện, tọa độ..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setIsOpen(true)}
         />
-        {query && (
+        {query ? (
           <button
             onClick={clearSearch}
             style={{
@@ -80,11 +80,30 @@ export default function SearchPanel({ onSelectLocation }) {
               background: 'transparent',
               border: 'none',
               color: '#94a3b8',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            <X size={15} />
+            <X size={14} />
           </button>
+        ) : (
+          <span
+            style={{
+              position: 'absolute',
+              right: 12,
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              color: '#64748b',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 4,
+              padding: '1px 5px',
+              pointerEvents: 'none'
+            }}
+          >
+            /
+          </span>
         )}
       </div>
 
@@ -106,8 +125,8 @@ export default function SearchPanel({ onSelectLocation }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {item.market_score > 0 && (
-                  <span style={{ fontSize: '0.72rem', color: '#ef4444', fontWeight: 700 }}>
-                    ⭐ {item.market_score}
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#00e5ff', fontWeight: 700 }}>
+                    {item.market_score} đ
                   </span>
                 )}
                 <span className="search-badge">{getTypeLabel(item.type)}</span>

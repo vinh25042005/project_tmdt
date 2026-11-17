@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Users, DollarSign, TrendingUp, Smartphone, Award } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, Smartphone, Award, ArrowUpRight } from 'lucide-react';
 import { api } from '../../api/client';
 
 export default function DashboardPanel({ onSelectProvince, selectedRegion = null }) {
@@ -51,59 +51,69 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
 
   return (
     <div>
-      {/* National KPI Cards */}
+      {/* Telemetry Metric Cards */}
       {summary && (
         <div className="stat-grid">
           <div className="stat-card">
-            <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Users size={12} color="#38bdf8" /> Dân Số {selectedRegion ? `(${selectedRegion})` : 'Toàn Quốc'}
+            <div className="stat-label">
+              <Users size={13} color="#00e5ff" />
+              <span>Dân Số {selectedRegion ? `(${selectedRegion})` : 'Toàn Quốc'}</span>
             </div>
             <div className="stat-value">
               {Number(summary.total_population || 0).toLocaleString()}
             </div>
-            <div className="stat-sub">Đô thị: {summary.avg_urbanization_pct}%</div>
+            <div className="stat-sub">
+              Tỷ lệ đô thị hóa: <strong style={{ color: '#00e5ff' }}>{summary.avg_urbanization_pct}%</strong>
+            </div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <DollarSign size={12} color="#22c55e" /> Thu Nhập Bình Quân
+            <div className="stat-label">
+              <DollarSign size={13} color="#10b981" />
+              <span>Thu Nhập Bình Quân</span>
             </div>
             <div className="stat-value">
-              {summary.avg_income_million_vnd} tr.đ
+              {summary.avg_income_million_vnd} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>tr.đ</span>
             </div>
-            <div className="stat-sub">Mỗi người / tháng</div>
+            <div className="stat-sub">Tháng / đầu người</div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <TrendingUp size={12} color="#f59e0b" /> Tổng GRDP {selectedRegion ? `(${selectedRegion})` : '63 Tỉnh'}
+            <div className="stat-label">
+              <TrendingUp size={13} color="#f59e0b" />
+              <span>Tổng GRDP {selectedRegion ? `(${selectedRegion})` : '63 Tỉnh'}</span>
             </div>
             <div className="stat-value">
-              {(Number(summary.total_gdp_billion_vnd || 0) / 1000000).toFixed(1)} triệu tỷ
+              {(Number(summary.total_gdp_billion_vnd || 0) / 1000000).toFixed(1)} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>tr. tỷ</span>
             </div>
             <div className="stat-sub">VNĐ / năm</div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Smartphone size={12} color="#a855f7" /> Kết Nối Số & TMĐT
+            <div className="stat-label">
+              <Smartphone size={13} color="#a855f7" />
+              <span>Chỉ Số TMĐT & Số Hóa</span>
             </div>
             <div className="stat-value">
-              {summary.avg_ecommerce_index} EBI
+              {summary.avg_ecommerce_index} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>EBI</span>
             </div>
-            <div className="stat-sub">Smartphone: {summary.avg_smartphone_penetration_pct}%</div>
+            <div className="stat-sub">
+              Smartphone: <strong style={{ color: '#a855f7' }}>{summary.avg_smartphone_penetration_pct}%</strong>
+            </div>
           </div>
         </div>
       )}
 
       {/* Chart Section */}
       <div className="layer-group">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <div className="layer-group-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Award size={14} /> Top Thị Trường {selectedRegion ? `(${selectedRegion})` : ''}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+          <div className="layer-group-title" style={{ margin: 0 }}>
+            <Award size={14} color="#00e5ff" />
+            <span>Top Thị Trường {selectedRegion ? `(${selectedRegion})` : 'Tiêu Biểu'}</span>
           </div>
           <select
             className="metric-select"
+            style={{ width: 'auto', padding: '5px 10px', fontSize: '0.74rem' }}
             value={metric}
             onChange={(e) => setMetric(e.target.value)}
           >
@@ -115,25 +125,34 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
           </select>
         </div>
 
-        <div style={{ height: 200, width: '100%', marginTop: 8 }}>
+        <div style={{ height: 210, width: '100%', marginTop: 8 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 25 }}>
+            <BarChart data={chartData} margin={{ top: 8, right: 10, left: -22, bottom: 25 }}>
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#94a3b8', fontSize: 9 }}
+                tick={{ fill: '#64748b', fontSize: 9, fontFamily: 'var(--font-sans)' }}
                 interval={0}
-                angle={-30}
+                angle={-32}
                 textAnchor="end"
               />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
               <Tooltip
-                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12, color: '#fff' }}
+                cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                contentStyle={{
+                  background: 'rgba(19, 28, 46, 0.96)',
+                  border: '1px solid rgba(255, 255, 255, 0.14)',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  color: '#f8fafc',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
+                }}
               />
-              <Bar dataKey="val" fill="#38bdf8" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="val" fill="#00e5ff" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={index === 0 ? '#ef4444' : index === 1 ? '#f59e0b' : '#38bdf8'}
+                    fill={index === 0 ? '#f59e0b' : index === 1 ? '#00e5ff' : '#0284c7'}
                   />
                 ))}
               </Bar>
@@ -144,11 +163,13 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
 
       {/* Leaderboard Table */}
       <div className="layer-group">
-        <div className="layer-group-title">Bảng Xếp Hạng Chi Tiết</div>
+        <div className="layer-group-title">
+          <span>Bảng Xếp Hạng Chi Tiết</span>
+        </div>
         <table className="ranking-table">
           <thead>
             <tr>
-              <th style={{ width: 35 }}>Hạng</th>
+              <th style={{ width: 34 }}>Hạng</th>
               <th>Địa Phương</th>
               <th>Vùng</th>
               <th style={{ textAlign: 'right' }}>Giá Trị</th>
@@ -162,9 +183,14 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
                     {r.rank}
                   </span>
                 </td>
-                <td style={{ fontWeight: 600 }}>{r.name}</td>
-                <td style={{ color: '#94a3b8', fontSize: '0.72rem' }}>{r.region}</td>
-                <td style={{ textAlign: 'right', fontWeight: 700, color: '#38bdf8' }}>
+                <td style={{ fontWeight: 600 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span>{r.name}</span>
+                    <ArrowUpRight size={12} color="#64748b" />
+                  </div>
+                </td>
+                <td style={{ color: '#64748b', fontSize: '0.72rem' }}>{r.region}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#00e5ff' }}>
                   {metric === 'market_score' && `${r.market_score}`}
                   {metric === 'population' && `${(r.population / 1000000).toFixed(2)}M`}
                   {metric === 'gdp_billion_vnd' && `${(r.gdp_billion_vnd / 1000).toFixed(0)}k tỷ`}

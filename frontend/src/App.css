@@ -1,3 +1,48 @@
+/* ==========================================================================
+   VN-MarketMap GIS Design System
+   High-Precision Spatial Intelligence & Market Analytics
+   Designed following bespoke GIS/Analyst Studio standards
+   ========================================================================== */
+
+:root {
+  /* Surface & Canvas Tokens */
+  --bg-canvas: #090d16;
+  --bg-sidebar: rgba(13, 19, 33, 0.92);
+  --bg-surface-elevated: #131c2e;
+  --bg-surface-card: rgba(22, 32, 53, 0.65);
+  --bg-surface-hover: rgba(30, 45, 74, 0.75);
+
+  /* Hairline Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(0, 229, 255, 0.5);
+
+  /* Precision Accent Palette */
+  --accent-cyan: #00e5ff;
+  --accent-cyan-glow: rgba(0, 229, 255, 0.18);
+  --accent-emerald: #10b981;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.18);
+  --accent-amber: #f59e0b;
+  --accent-amber-glow: rgba(245, 158, 11, 0.18);
+  --accent-rose: #f43f5e;
+  --accent-indigo: #6366f1;
+
+  /* Typography Scale */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Geometry & Shadows */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --shadow-hud: 0 12px 32px -8px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-sidebar: 8px 0 32px -4px rgba(0, 0, 0, 0.6);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,11 +52,17 @@
 body, html, #root {
   width: 100%;
   height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #1e293b;
-  background-color: #0f172a;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ==========================================================================
+   Main Shell Layout
+   ========================================================================== */
 
 .app-container {
   display: flex;
@@ -19,112 +70,152 @@ body, html, #root {
   height: 100vh;
   position: relative;
   overflow: hidden;
+  background: var(--bg-canvas);
 }
 
-/* Sidebar */
+/* ==========================================================================
+   Sidebar: Command Center
+   ========================================================================== */
+
 .sidebar {
   width: 440px;
+  min-width: 440px;
   height: 100%;
-  background: rgba(15, 23, 42, 0.94);
-  backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  z-index: 20;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.3s ease;
+  z-index: 25;
+  box-shadow: var(--shadow-sidebar);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sidebar-header {
-  padding: 18px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(30, 41, 59, 0.4);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .brand-title {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #f8fafc;
-  font-size: 1.15rem;
+  color: var(--text-primary);
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
 }
 
 .brand-badge {
-  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
   padding: 2px 7px;
-  border-radius: 9999px;
-  background: linear-space(#3b82f6, #1d4ed8);
-  background: #2563eb;
-  color: #fff;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 229, 255, 0.12);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 229, 255, 0.3);
   font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .brand-sub {
-  color: #94a3b8;
-  font-size: 0.75rem;
-  margin-top: 3px;
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+  margin-top: 4px;
+  line-height: 1.35;
 }
 
-/* Tabs */
+/* ==========================================================================
+   Navigation Tabs: Sleek Segmented Switcher
+   ========================================================================== */
+
 .sidebar-tabs {
-  display: flex;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 23, 42, 0.6);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 6px 14px;
+  background: rgba(9, 13, 22, 0.5);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .tab-btn {
-  flex: 1;
-  padding: 12px 6px;
+  padding: 8px 6px;
   background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 0.8rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
+  gap: 5px;
+  transition: all 0.18s ease;
 }
 
 .tab-btn:hover {
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .tab-btn.active {
-  color: #38bdf8;
-  border-bottom: 2px solid #38bdf8;
-  background: rgba(56, 189, 248, 0.06);
+  color: var(--accent-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.25);
+  font-weight: 600;
 }
+
+.tab-btn svg {
+  transition: transform 0.18s ease;
+}
+
+.tab-btn.active svg {
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Sidebar Scroll Area
+   ========================================================================== */
 
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  padding: 18px 20px;
+  overflow-x: hidden;
+  padding: 16px 18px 24px 18px;
 }
 
 .sidebar-content::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .sidebar-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
 }
 
-/* Search Box */
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================================================
+   Search Panel
+   ========================================================================== */
+
 .search-container {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .search-input-wrap {
@@ -135,222 +226,203 @@ body, html, #root {
 
 .search-input {
   width: 100%;
-  padding: 11px 14px 11px 38px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  color: #f8fafc;
-  font-size: 0.85rem;
+  padding: 10px 36px 10px 36px;
+  background: rgba(19, 28, 46, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-family: var(--font-sans);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: var(--text-tertiary);
 }
 
 .search-input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  background: rgba(19, 28, 46, 0.95);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
 }
 
 .search-icon {
   position: absolute;
-  left: 12px;
-  color: #94a3b8;
+  left: 11px;
+  color: var(--text-tertiary);
   pointer-events: none;
 }
 
 .search-results-list {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
-  margin-top: 6px;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  max-height: 280px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hud);
+  max-height: 300px;
   overflow-y: auto;
-  z-index: 50;
+  z-index: 60;
+  padding: 4px;
 }
 
 .search-item {
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s ease;
 }
 
 .search-item:hover {
-  background: rgba(56, 189, 248, 0.12);
+  background: rgba(0, 229, 255, 0.09);
 }
 
 .search-item-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .search-item-name {
-  color: #f8fafc;
-  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-size: 0.83rem;
   font-weight: 600;
 }
 
 .search-item-sub {
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-size: 0.72rem;
 }
 
 .search-badge {
+  font-family: var(--font-mono);
   font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
 }
 
-/* Map View */
-.map-container {
-  flex: 1;
-  height: 100%;
-  position: relative;
-}
+/* ==========================================================================
+   Structural Card Groups
+   ========================================================================== */
 
-.maplibregl-map {
-  width: 100%;
-  height: 100%;
-}
-
-/* Map Floating Overlays */
-.map-top-bar {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 10;
-  display: flex;
-  gap: 10px;
-}
-
-.metric-selector-card {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 8px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #f8fafc;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.metric-select {
-  background: #1e293b;
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  cursor: pointer;
-  outline: none;
-}
-
-/* Map Legend */
-.map-legend {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+.layer-group {
+  margin-bottom: 16px;
+  background: var(--bg-surface-card);
+  border-radius: var(--radius-md);
   padding: 14px 16px;
-  color: #f8fafc;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  z-index: 10;
-  min-width: 200px;
+  border: 1px solid var(--border-subtle);
+  transition: border-color 0.2s ease;
 }
 
-.legend-title {
-  font-size: 0.78rem;
+.layer-group:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.layer-group-title {
+  font-size: 0.74rem;
   font-weight: 600;
-  color: #94a3b8;
-  margin-bottom: 8px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.legend-scale {
   display: flex;
-  height: 10px;
-  border-radius: 9999px;
-  overflow: hidden;
-  margin-bottom: 6px;
+  align-items: center;
+  gap: 8px;
 }
 
-.legend-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  color: #cbd5e1;
-}
+/* ==========================================================================
+   KPI Stat Telemetry Grid
+   ========================================================================== */
 
-/* Info Cards & Stats */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .stat-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 12px;
+  background: var(--bg-surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: var(--bg-surface-hover);
 }
 
 .stat-label {
-  font-size: 0.72rem;
-  color: #94a3b8;
-  margin-bottom: 4px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .stat-value {
+  font-family: var(--font-mono);
   font-size: 1.15rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .stat-sub {
   font-size: 0.68rem;
-  color: #38bdf8;
-  margin-top: 2px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* ==========================================================================
+   Form Controls (Select, Sliders, Toggles)
+   ========================================================================== */
+
+.metric-select {
+  width: 100%;
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.18s ease;
+}
+
+.metric-select:hover {
+  border-color: var(--border-medium);
+}
+
+.metric-select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.2);
 }
 
 /* Layer Toggle List */
-.layer-group {
-  margin-bottom: 18px;
-  background: rgba(30, 41, 59, 0.4);
-  border-radius: 10px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.layer-group-title {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #94a3b8;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
 .layer-toggle-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 9px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -361,16 +433,16 @@ body, html, #root {
 .layer-toggle-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #e2e8f0;
-  font-size: 0.82rem;
+  gap: 9px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
 }
 
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 36px;
-  height: 20px;
+  width: 34px;
+  height: 18px;
 }
 
 .toggle-switch input {
@@ -383,75 +455,33 @@ body, html, #root {
   position: absolute;
   cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #334155;
-  transition: .3s;
-  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.14);
+  transition: .22s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 999px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 14px;
-  width: 14px;
+  height: 12px;
+  width: 12px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
-  transition: .3s;
+  background-color: var(--text-primary);
+  transition: .22s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #38bdf8;
+  background-color: var(--accent-cyan);
 }
 
 input:checked + .slider:before {
   transform: translateX(16px);
+  background-color: #090d16;
 }
 
-/* Ranking Table */
-.ranking-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-
-.ranking-table th {
-  text-align: left;
-  padding: 8px 6px;
-  color: #94a3b8;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.ranking-table td {
-  padding: 8px 6px;
-  color: #e2e8f0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.ranking-table tr:hover td {
-  background: rgba(56, 189, 248, 0.08);
-  cursor: pointer;
-}
-
-.rank-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: #334155;
-  color: #f8fafc;
-}
-
-.rank-1 { background: #eab308; color: #000; }
-.rank-2 { background: #94a3b8; color: #000; }
-.rank-3 { background: #b45309; color: #fff; }
-
-/* Decision Sliders */
+/* Decision Weight Sliders */
 .weight-slider-item {
   margin-bottom: 14px;
 }
@@ -459,31 +489,129 @@ input:checked + .slider:before {
 .weight-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.78rem;
-  color: #cbd5e1;
-  margin-bottom: 4px;
+  font-size: 0.77rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.weight-header strong {
+  font-family: var(--font-mono);
+  color: var(--accent-cyan);
 }
 
 .weight-slider {
   width: 100%;
-  accent-color: #38bdf8;
+  height: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  outline: none;
   cursor: pointer;
 }
 
-/* Recommendation Card */
+.weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.weight-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ==========================================================================
+   Leaderboard & Tables
+   ========================================================================== */
+
+.ranking-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.78rem;
+}
+
+.ranking-table th {
+  text-align: left;
+  padding: 8px 8px;
+  color: var(--text-tertiary);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ranking-table td {
+  padding: 8px 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  vertical-align: middle;
+}
+
+.ranking-table tr:hover td {
+  background: rgba(0, 229, 255, 0.06);
+  cursor: pointer;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+.rank-1 {
+  background: #f59e0b;
+  color: #090d16;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.rank-2 {
+  background: #e2e8f0;
+  color: #090d16;
+  font-weight: 800;
+}
+
+.rank-3 {
+  background: #b45309;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Recommendation Cards (MCDA Strategy)
+   ========================================================================== */
+
 .recom-card {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: var(--bg-surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   padding: 12px 14px;
-  margin-bottom: 12px;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  margin-bottom: 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .recom-card:hover {
   transform: translateY(-2px);
-  border-color: #38bdf8;
+  border-color: rgba(0, 229, 255, 0.4);
+  background: var(--bg-surface-hover);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
 .recom-header {
@@ -494,99 +622,190 @@ input:checked + .slider:before {
 }
 
 .recom-name {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .recom-score {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #38bdf8;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
 }
 
 .recom-tier {
   display: inline-block;
-  font-size: 0.68rem;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .recom-strategy {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  line-height: 1.4;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
-/* Province Modal / Drawer */
+/* ==========================================================================
+   Map HUD Canvas & Floating Modules
+   ========================================================================== */
+
+.map-container {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  background: var(--bg-canvas);
+}
+
+.maplibregl-map, .leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #090d16 !important;
+}
+
+.map-top-bar {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metric-selector-card {
+  background: rgba(13, 19, 33, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-hud);
+}
+
+/* Map Spatial Legend */
+.map-legend {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(13, 19, 33, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-hud);
+  z-index: 15;
+  min-width: 220px;
+}
+
+.legend-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legend-scale {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Slide-in Dossier Drawer & Modal Overlays
+   ========================================================================== */
+
 .drawer-backdrop {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 40;
+  background: rgba(4, 7, 14, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
   display: flex;
   justify-content: flex-end;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .detail-drawer {
   width: 480px;
   height: 100%;
-  background: #0f172a;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 24px;
+  background: var(--bg-surface-elevated);
+  border-left: 1px solid var(--border-medium);
+  padding: 24px 26px;
   overflow-y: auto;
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
-  color: #f8fafc;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.7);
+  color: var(--text-primary);
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* MapLibre Popup Styling */
-.maplibregl-popup-content {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
-  padding: 12px 14px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-}
-
-.maplibregl-popup-close-button {
-  color: #94a3b8 !important;
-  padding: 4px !important;
-}
-
-.maplibregl-popup-tip {
-  border-top-color: #0f172a !important;
-}
-
-/* Leaflet Custom Tooltip & Controls */
-.leaflet-container {
-  background-color: #090d16 !important;
-}
-
+/* Custom Tooltips for Map Elements */
 .custom-leaflet-tooltip {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+  background: var(--bg-surface-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-hud) !important;
   padding: 8px 12px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.78rem !important;
 }
 
-.custom-leaflet-tooltip:before {
-  border-top-color: #0f172a !important;
+.leaflet-bar {
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: var(--shadow-hud) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
 }
 
 .leaflet-bar a {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-bottom: 1px solid #334155 !important;
+  background-color: var(--bg-surface-elevated) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  transition: all 0.15s ease !important;
 }
 
 .leaflet-bar a:hover {
-  background-color: #334155 !important;
-  color: #38bdf8 !important;
+  background-color: var(--bg-surface-hover) !important;
+  color: var(--accent-cyan) !important;
 }
 
+/* Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
