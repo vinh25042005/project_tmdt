@@ -16,7 +16,7 @@ export default function LayerControl({
       {/* Metric Selection */}
       <div className="layer-group">
         <div className="layer-group-title">
-          <Map size={14} color="#00e5ff" />
+          <Map size={14} style={{ color: 'var(--brand-primary)' }} />
           <span>Lớp Trực Quan Hóa (Choropleth GIS)</span>
         </div>
         <select
@@ -34,8 +34,8 @@ export default function LayerControl({
 
         {/* Region Filter */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <div style={{ fontSize: '0.74rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Filter size={12} color="#94a3b8" />
+          <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Filter size={12} style={{ color: 'var(--text-secondary)' }} />
             <span>Phạm Vi Vùng Kinh Tế:</span>
           </div>
           {selectedRegion && (
@@ -44,7 +44,7 @@ export default function LayerControl({
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#00e5ff',
+                color: 'var(--brand-primary)',
                 fontSize: '0.72rem',
                 cursor: 'pointer',
                 display: 'flex',
@@ -61,8 +61,8 @@ export default function LayerControl({
         <select
           className="metric-select"
           style={{
-            borderColor: selectedRegion ? 'rgba(0, 229, 255, 0.4)' : undefined,
-            background: selectedRegion ? 'rgba(0, 229, 255, 0.06)' : undefined
+            borderColor: selectedRegion ? 'var(--brand-border)' : undefined,
+            background: selectedRegion ? 'var(--brand-light)' : undefined
           }}
           value={selectedRegion || ''}
           onChange={(e) => onRegionChange(e.target.value || null)}
@@ -79,15 +79,15 @@ export default function LayerControl({
       {/* Administrative Boundary Layers */}
       <div className="layer-group">
         <div className="layer-group-title">
-          <Layers size={14} color="#00e5ff" />
+          <Layers size={14} style={{ color: 'var(--brand-primary)' }} />
           <span>Ranh Giới Không Gian Đa Cấp</span>
         </div>
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#00e5ff', boxShadow: '0 0 8px rgba(0,229,255,0.6)' }} />
+            <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--brand-primary)' }} />
             <span>Tỉnh / Thành Phố</span>
-            <span style={{ fontSize: '0.68rem', color: '#64748b' }}>(63 đơn vị)</span>
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>(63 đơn vị)</span>
           </span>
           <label className="toggle-switch">
             <input
@@ -101,9 +101,9 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 8px rgba(245,158,11,0.6)' }} />
+            <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--accent-warning)' }} />
             <span>Quận / Huyện</span>
-            <span style={{ fontSize: '0.68rem', color: '#64748b' }}>(708 đơn vị)</span>
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>(708 đơn vị)</span>
           </span>
           <label className="toggle-switch">
             <input
@@ -117,7 +117,7 @@ export default function LayerControl({
 
         <div className="layer-toggle-item">
           <span className="layer-toggle-label">
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
+            <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--accent-purple)' }} />
             <span>Xã / Phường / Thị Trấn</span>
           </span>
           <label className="toggle-switch">

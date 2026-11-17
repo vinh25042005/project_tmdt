@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Sliders, ChevronRight, Sparkles, Compass, ShoppingCart, Package, Gem } from 'lucide-react';
+import { Target, Sparkles, ShoppingCart, Package, Gem } from 'lucide-react';
 import { api } from '../../api/client';
 
 export default function DecisionPanel({ onSelectProvince, selectedRegion = null }) {
@@ -54,10 +54,10 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
       {/* Header and Explanation */}
       <div className="layer-group">
         <div className="layer-group-title">
-          <Target size={14} color="#00e5ff" />
+          <Target size={14} style={{ color: 'var(--brand-primary)' }} />
           <span>Hỗ Trợ Ra Quyết Định (MCDA Model)</span>
         </div>
-        <p style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.45, marginBottom: 14 }}>
+        <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', lineHeight: 1.45, marginBottom: 14 }}>
           Mô hình đánh giá đa tiêu chí (MCDA) phân bổ trọng số động theo chiến lược mở rộng và định vị phân khúc khách hàng.
         </p>
 
@@ -67,18 +67,18 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
             onClick={() => applyPreset('ecommerce')}
             style={{
               padding: '8px 6px',
-              borderRadius: 6,
+              borderRadius: 'var(--radius-sm)',
               fontSize: '0.72rem',
               fontWeight: 600,
               cursor: 'pointer',
-              border: preset === 'ecommerce' ? '1px solid rgba(0, 229, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-              background: preset === 'ecommerce' ? 'rgba(0, 229, 255, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-              color: preset === 'ecommerce' ? '#00e5ff' : '#94a3b8',
+              border: preset === 'ecommerce' ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+              background: preset === 'ecommerce' ? 'var(--brand-light)' : 'var(--bg-surface-secondary)',
+              color: preset === 'ecommerce' ? 'var(--brand-primary)' : 'var(--text-secondary)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 4,
-              transition: 'all 0.18s ease'
+              transition: 'all 0.15s ease'
             }}
           >
             <ShoppingCart size={13} />
@@ -89,18 +89,18 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
             onClick={() => applyPreset('fmcg')}
             style={{
               padding: '8px 6px',
-              borderRadius: 6,
+              borderRadius: 'var(--radius-sm)',
               fontSize: '0.72rem',
               fontWeight: 600,
               cursor: 'pointer',
-              border: preset === 'fmcg' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-              background: preset === 'fmcg' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-              color: preset === 'fmcg' ? '#f59e0b' : '#94a3b8',
+              border: preset === 'fmcg' ? '1px solid var(--accent-warning)' : '1px solid var(--border-subtle)',
+              background: preset === 'fmcg' ? 'var(--accent-warning-bg)' : 'var(--bg-surface-secondary)',
+              color: preset === 'fmcg' ? 'var(--accent-warning)' : 'var(--text-secondary)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 4,
-              transition: 'all 0.18s ease'
+              transition: 'all 0.15s ease'
             }}
           >
             <Package size={13} />
@@ -111,22 +111,22 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
             onClick={() => applyPreset('luxury')}
             style={{
               padding: '8px 6px',
-              borderRadius: 6,
+              borderRadius: 'var(--radius-sm)',
               fontSize: '0.72rem',
               fontWeight: 600,
               cursor: 'pointer',
-              border: preset === 'luxury' ? '1px solid rgba(168, 85, 247, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-              background: preset === 'luxury' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-              color: preset === 'luxury' ? '#c084fc' : '#94a3b8',
+              border: preset === 'luxury' ? '1px solid var(--accent-purple)' : '1px solid var(--border-subtle)',
+              background: preset === 'luxury' ? 'var(--accent-purple-bg)' : 'var(--bg-surface-secondary)',
+              color: preset === 'luxury' ? 'var(--accent-purple)' : 'var(--text-secondary)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 4,
-              transition: 'all 0.18s ease'
+              transition: 'all 0.15s ease'
             }}
           >
             <Gem size={13} />
-            <span>Cao Cấp / Hạng Sang</span>
+            <span>Cao Cấp / Sang</span>
           </button>
         </div>
 
@@ -199,7 +199,7 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
       {/* Target Market Recommendations */}
       <div className="layer-group">
         <div className="layer-group-title">
-          <Sparkles size={14} color="#f59e0b" />
+          <Sparkles size={14} style={{ color: 'var(--accent-warning)' }} />
           <span>Thị Trường Đề Xuất Ưu Tiên {selectedRegion ? `(${selectedRegion})` : ''}</span>
         </div>
 
@@ -227,7 +227,7 @@ export default function DecisionPanel({ onSelectProvince, selectedRegion = null 
               {item.market_tier}
             </span>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#94a3b8', marginBottom: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 8 }}>
               <span>Dân số: {(item.population / 1000000).toFixed(1)}M</span>
               <span>Thu nhập: {item.per_capita_income_million_vnd} tr</span>
               <span>TMĐT: {item.ecommerce_index}</span>

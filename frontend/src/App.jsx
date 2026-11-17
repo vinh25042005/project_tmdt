@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Map, BarChart2, Compass, Layers, ArrowRightLeft, Radio } from 'lucide-react';
+import { 
+  Layers, 
+  BarChart2, 
+  Compass, 
+  ArrowRightLeft, 
+  Sun, 
+  Moon, 
+  MapPin
+} from 'lucide-react';
 import MapView, { METRIC_CONFIG } from './components/Map/MapView';
 import MapErrorBoundary from './components/Map/ErrorBoundary';
 import SearchPanel from './components/Sidebar/SearchPanel';
@@ -12,6 +20,7 @@ import { api } from './api/client';
 import './App.css';
 
 export default function App() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('app-theme') || 'dark');
   const [activeTab, setActiveTab] = useState('layers'); // 'layers', 'analytics', 'decision'
   const [selectedMetric, setSelectedMetric] = useState('market_score');
   const [activeLayers, setActiveLayers] = useState({
@@ -28,6 +37,11 @@ export default function App() {
   const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('app-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
     loadRegions();
   }, []);
 
@@ -38,6 +52,10 @@ export default function App() {
     } catch (err) {
       console.error('Failed to load regions:', err);
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   const handleToggleLayer = (layerName) => {
@@ -65,7 +83,7 @@ export default function App() {
 
   const handleAddCompare = (code) => {
     if (!compareCodes.includes(code)) {
-      const updated = [...compareCodes, code].slice(-3); // max 3 provinces
+      const updated = [...compareCodes, code].slice(-3);
       setCompareCodes(updated);
       setShowComparison(true);
     } else {
@@ -75,56 +93,63 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Left Command Sidebar */}
+      {/* Docked Left Command Sidebar */}
       <aside className="sidebar">
-        {/* Brand Header */}
+        {/* Brand Header with Theme Switcher */}
         <div className="sidebar-header">
-          <div>
-            <div className="brand-title">
-              <span>VN-MarketMap</span>
-              <span className="brand-badge">GIS v2.4</span>
+          <div className="brand-wrapper">
+            <div className="brand-logo-icon">
+              <MapPin size={18} />
             </div>
-            <div className="brand-sub">
-              Hệ thống Thấu Hiểu Thị Trường & Không Gian Bán Lẻ
+            <div>
+              <div className="brand-title">
+                <span>VN-MarketMap</span>
+                <span className="brand-badge">GIS 2.0</span>
+              </div>
+              <div className="brand-sub">Hệ thống Thấu Hiểu Thị Trường & Bán Lẻ</div>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.68rem', color: '#10b981', fontFamily: 'var(--font-mono)' }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.8)' }} />
-            <span>ONLINE</span>
-          </div>
+
+          <button 
+            className="theme-switch-btn" 
+            onClick={toggleTheme} 
+            title={theme === 'light' ? 'Chuyển sang giao diện Tối' : 'Chuyển sang giao diện Sáng'}
+          >
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
         </div>
 
         {/* Global Search Bar */}
-        <div style={{ padding: '14px 18px 0 18px' }}>
+        <div style={{ padding: '14px 16px 0 16px' }}>
           <SearchPanel onSelectLocation={handleSelectLocation} />
         </div>
 
-        {/* Navigation Tabs */}
+        {/* Segmented Navigation Tabs */}
         <div className="sidebar-tabs">
           <button
             className={`tab-btn ${activeTab === 'layers' ? 'active' : ''}`}
             onClick={() => setActiveTab('layers')}
           >
-            <Layers size={15} />
+            <Layers size={16} />
             <span>Lớp Bản Đồ</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
             onClick={() => setActiveTab('analytics')}
           >
-            <BarChart2 size={15} />
+            <BarChart2 size={16} />
             <span>Phân Tích</span>
           </button>
           <button
             className={`tab-btn ${activeTab === 'decision' ? 'active' : ''}`}
             onClick={() => setActiveTab('decision')}
           >
-            <Compass size={15} />
+            <Compass size={16} />
             <span>Quyết Định</span>
           </button>
         </div>
 
-        {/* Tab Content */}
+        {/* Dynamic Sidebar Content */}
         <div className="sidebar-content">
           {activeTab === 'layers' && (
             <LayerControl
@@ -153,26 +178,26 @@ export default function App() {
           )}
         </div>
 
-        {/* Bottom Bar: Compare shortcut */}
+        {/* Bottom Bar: Compare Shortcut */}
         {compareCodes.length > 0 && (
           <div style={{
-            padding: '12px 18px',
+            padding: '12px 16px',
             borderTop: '1px solid var(--border-subtle)',
-            background: 'var(--bg-surface-elevated)',
+            background: 'var(--bg-surface-secondary)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              Đã ghim: <strong style={{ color: '#00e5ff' }}>{compareCodes.length} tỉnh/thành</strong>
+              Đã ghim: <strong style={{ color: 'var(--brand-primary)' }}>{compareCodes.length} tỉnh/thành</strong>
             </span>
             <button
               onClick={() => setShowComparison(true)}
               style={{
-                background: '#00e5ff',
-                color: '#090d16',
+                background: 'var(--brand-primary)',
+                color: '#ffffff',
                 border: 'none',
-                borderRadius: 'var(--radius-sm)',
+                borderRadius: '6px',
                 padding: '6px 12px',
                 fontSize: '0.75rem',
                 fontWeight: 700,
@@ -180,26 +205,25 @@ export default function App() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 5,
-                boxShadow: '0 0 12px rgba(0,229,255,0.4)',
-                transition: 'all 0.15s ease'
+                boxShadow: 'var(--shadow-sm)'
               }}
             >
               <ArrowRightLeft size={13} />
-              <span>So Sánh Chi Tiết</span>
+              <span>Xem So Sánh</span>
             </button>
           </div>
         )}
       </aside>
 
-      {/* Main Map Canvas */}
+      {/* Main Map Viewport */}
       <main className="map-container">
         {/* Floating Quick Metric Switcher & Region Filter Badge */}
         <div className="map-top-bar">
           <div className="metric-selector-card">
-            <span style={{ fontSize: '0.76rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Chỉ số:</span>
+            <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Chỉ số:</span>
             <select
               className="metric-select"
-              style={{ padding: '5px 10px', fontSize: '0.78rem' }}
+              style={{ padding: '5px 28px 5px 10px', fontSize: '0.78rem', width: 'auto' }}
               value={selectedMetric}
               onChange={(e) => setSelectedMetric(e.target.value)}
             >
@@ -210,31 +234,24 @@ export default function App() {
           </div>
 
           {selectedRegion && (
-            <div
-              className="metric-selector-card"
-              style={{
-                borderColor: 'rgba(0, 229, 255, 0.4)',
-                background: 'rgba(13, 19, 33, 0.95)'
-              }}
-            >
-              <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>Vùng:</span>
-              <strong style={{ fontSize: '0.8rem', color: '#00e5ff' }}>{selectedRegion}</strong>
+            <div className="metric-selector-card" style={{ borderColor: 'var(--brand-border)' }}>
+              <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>Vùng:</span>
+              <strong style={{ fontSize: '0.8rem', color: 'var(--brand-primary)' }}>{selectedRegion}</strong>
               <button
                 onClick={() => setSelectedRegion(null)}
                 title="Bỏ lọc vùng kinh tế"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: 'none',
+                  background: 'var(--bg-surface-secondary)',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '50%',
-                  color: '#cbd5e1',
+                  color: 'var(--text-secondary)',
                   width: 18,
                   height: 18,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '11px',
-                  lineHeight: 1,
+                  fontSize: '10px',
                   marginLeft: 4
                 }}
               >
@@ -250,6 +267,7 @@ export default function App() {
             activeLayers={activeLayers}
             selectedRegion={selectedRegion}
             focusLocation={focusLocation}
+            theme={theme}
             onSelectProvince={(code) => setSelectedProvinceCode(code)}
           />
         </MapErrorBoundary>

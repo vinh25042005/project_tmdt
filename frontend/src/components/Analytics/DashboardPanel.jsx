@@ -51,54 +51,54 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
 
   return (
     <div>
-      {/* Telemetry Metric Cards */}
+      {/* Telemetry Metric KPI Cards */}
       {summary && (
         <div className="stat-grid">
           <div className="stat-card">
             <div className="stat-label">
-              <Users size={13} color="#00e5ff" />
+              <Users size={13} style={{ color: 'var(--brand-primary)' }} />
               <span>Dân Số {selectedRegion ? `(${selectedRegion})` : 'Toàn Quốc'}</span>
             </div>
             <div className="stat-value">
               {Number(summary.total_population || 0).toLocaleString()}
             </div>
             <div className="stat-sub">
-              Tỷ lệ đô thị hóa: <strong style={{ color: '#00e5ff' }}>{summary.avg_urbanization_pct}%</strong>
+              Tỷ lệ đô thị: <strong style={{ color: 'var(--brand-primary)' }}>{summary.avg_urbanization_pct}%</strong>
             </div>
           </div>
 
           <div className="stat-card">
             <div className="stat-label">
-              <DollarSign size={13} color="#10b981" />
+              <DollarSign size={13} style={{ color: 'var(--accent-success)' }} />
               <span>Thu Nhập Bình Quân</span>
             </div>
             <div className="stat-value">
-              {summary.avg_income_million_vnd} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>tr.đ</span>
+              {summary.avg_income_million_vnd} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-tertiary)' }}>tr.đ</span>
             </div>
             <div className="stat-sub">Tháng / đầu người</div>
           </div>
 
           <div className="stat-card">
             <div className="stat-label">
-              <TrendingUp size={13} color="#f59e0b" />
-              <span>Tổng GRDP {selectedRegion ? `(${selectedRegion})` : '63 Tỉnh'}</span>
+              <TrendingUp size={13} style={{ color: 'var(--accent-warning)' }} />
+              <span>Tổng GRDP {selectedRegion ? `(${selectedRegion})` : 'Khu Vực'}</span>
             </div>
             <div className="stat-value">
-              {(Number(summary.total_gdp_billion_vnd || 0) / 1000000).toFixed(1)} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>tr. tỷ</span>
+              {(Number(summary.total_gdp_billion_vnd || 0) / 1000000).toFixed(1)} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-tertiary)' }}>tr. tỷ</span>
             </div>
             <div className="stat-sub">VNĐ / năm</div>
           </div>
 
           <div className="stat-card">
             <div className="stat-label">
-              <Smartphone size={13} color="#a855f7" />
+              <Smartphone size={13} style={{ color: 'var(--accent-purple)' }} />
               <span>Chỉ Số TMĐT & Số Hóa</span>
             </div>
             <div className="stat-value">
-              {summary.avg_ecommerce_index} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#94a3b8' }}>EBI</span>
+              {summary.avg_ecommerce_index} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-tertiary)' }}>EBI</span>
             </div>
             <div className="stat-sub">
-              Smartphone: <strong style={{ color: '#a855f7' }}>{summary.avg_smartphone_penetration_pct}%</strong>
+              Smartphone: <strong style={{ color: 'var(--accent-purple)' }}>{summary.avg_smartphone_penetration_pct}%</strong>
             </div>
           </div>
         </div>
@@ -108,12 +108,12 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
       <div className="layer-group">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <div className="layer-group-title" style={{ margin: 0 }}>
-            <Award size={14} color="#00e5ff" />
-            <span>Top Thị Trường {selectedRegion ? `(${selectedRegion})` : 'Tiêu Biểu'}</span>
+            <Award size={14} style={{ color: 'var(--brand-primary)' }} />
+            <span>Top Thị Trường {selectedRegion ? `(${selectedRegion})` : 'Dẫn Đầu'}</span>
           </div>
           <select
             className="metric-select"
-            style={{ width: 'auto', padding: '5px 10px', fontSize: '0.74rem' }}
+            style={{ width: 'auto', padding: '4px 10px', fontSize: '0.74rem' }}
             value={metric}
             onChange={(e) => setMetric(e.target.value)}
           >
@@ -130,29 +130,28 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
             <BarChart data={chartData} margin={{ top: 8, right: 10, left: -22, bottom: 25 }}>
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#64748b', fontSize: 9, fontFamily: 'var(--font-sans)' }}
+                tick={{ fill: 'var(--text-tertiary)', fontSize: 9, fontFamily: 'var(--font-sans)' }}
                 interval={0}
                 angle={-32}
                 textAnchor="end"
               />
-              <YAxis tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
+              <YAxis tick={{ fill: 'var(--text-tertiary)', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
               <Tooltip
-                cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                cursor={{ fill: 'var(--bg-surface-hover)' }}
                 contentStyle={{
-                  background: 'rgba(19, 28, 46, 0.96)',
-                  border: '1px solid rgba(255, 255, 255, 0.14)',
+                  background: 'var(--bg-surface-elevated)',
+                  border: '1px solid var(--border-default)',
                   borderRadius: 8,
                   fontSize: 12,
-                  color: '#f8fafc',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
+                  color: 'var(--text-primary)',
+                  boxShadow: 'var(--shadow-md)'
                 }}
               />
-              <Bar dataKey="val" fill="#00e5ff" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="val" fill="var(--brand-primary)" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={index === 0 ? '#f59e0b' : index === 1 ? '#00e5ff' : '#0284c7'}
+                    fill={index === 0 ? '#f59e0b' : index === 1 ? '#3b82f6' : '#60a5fa'}
                   />
                 ))}
               </Bar>
@@ -186,11 +185,11 @@ export default function DashboardPanel({ onSelectProvince, selectedRegion = null
                 <td style={{ fontWeight: 600 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <span>{r.name}</span>
-                    <ArrowUpRight size={12} color="#64748b" />
+                    <ArrowUpRight size={12} style={{ color: 'var(--text-tertiary)' }} />
                   </div>
                 </td>
-                <td style={{ color: '#64748b', fontSize: '0.72rem' }}>{r.region}</td>
-                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#00e5ff' }}>
+                <td style={{ color: 'var(--text-tertiary)', fontSize: '0.72rem' }}>{r.region}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--brand-primary)' }}>
                   {metric === 'market_score' && `${r.market_score}`}
                   {metric === 'population' && `${(r.population / 1000000).toFixed(2)}M`}
                   {metric === 'gdp_billion_vnd' && `${(r.gdp_billion_vnd / 1000).toFixed(0)}k tỷ`}

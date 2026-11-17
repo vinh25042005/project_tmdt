@@ -7,42 +7,43 @@ export const METRIC_CONFIG = {
     unit: 'điểm (0-100)',
     format: (v) => `${v}/100`,
     domain: [25, 40, 55, 75],
-    colors: ['#3b82f6', '#06b6d4', '#eab308', '#f97316', '#ef4444']
+    // Dải màu đa sắc Radar thời tiết: Xanh lam (Thấp) -> Lục -> Vàng cam -> Đỏ đậm (Cao nhất)
+    colors: ['#2563eb', '#10b981', '#f59e0b', '#f97316', '#dc2626']
   },
   population: {
     label: 'Quy Mô Dân Số',
     unit: 'người',
     format: (v) => `${(v / 1000000).toFixed(2)} triệu`,
     domain: [1000000, 2000000, 4000000, 8000000],
-    colors: ['#e0f2fe', '#7dd3fc', '#0284c7', '#0369a1', '#075985']
+    colors: ['#0284c7', '#0d9488', '#eab308', '#ea580c', '#e11d48']
   },
   gdp_billion_vnd: {
     label: 'Tổng Sản Phẩm (GRDP)',
     unit: 'tỷ VNĐ',
     format: (v) => `${(v / 1000).toFixed(0)} nghìn tỷ`,
     domain: [50000, 150000, 300000, 600000],
-    colors: ['#fef08a', '#facc15', '#eab308', '#ca8a04', '#a16207']
+    colors: ['#3b82f6', '#14b8a6', '#facc15', '#f97316', '#b91c1c']
   },
   per_capita_income_million_vnd: {
     label: 'Thu Nhập Bình Quân',
     unit: 'tr.đ/tháng',
     format: (v) => `${v} tr.đ/tháng`,
     domain: [4.0, 5.0, 6.0, 7.5],
-    colors: ['#dcfce7', '#86efac', '#22c55e', '#16a34a', '#15803d']
+    colors: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
   },
   ecommerce_index: {
     label: 'Chỉ Số TMĐT (EBI)',
     unit: 'điểm EBI',
     format: (v) => `${v} điểm`,
     domain: [28, 35, 45, 75],
-    colors: ['#ede9fe', '#c4b5fd', '#8b5cf6', '#6d28d9', '#4c1d95']
+    colors: ['#0284c7', '#8b5cf6', '#ec4899', '#f97316', '#dc2626']
   },
   population_density: {
     label: 'Mật Độ Dân Số',
     unit: 'người/km²',
     format: (v) => `${v.toLocaleString()} ng/km²`,
     domain: [150, 400, 1000, 2500],
-    colors: ['#fed7aa', '#fb923c', '#f97316', '#ea580c', '#c2410c']
+    colors: ['#38bdf8', '#34d399', '#fbbf24', '#fb923c', '#f43f5e']
   }
 };
 
@@ -64,17 +65,18 @@ export default function MapView({
   selectedRegion = null,
   onSelectProvince,
   activeLayers = { provinces: true, districts: false, wards: false },
-  focusLocation
+  focusLocation,
+  theme = 'light'
 }) {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
+  const tileLayerRef = useRef(null);
   const provincesLayerRef = useRef(null);
   const provincesBgLayerRef = useRef(null);
   const districtsLayerRef = useRef(null);
   const wardsLayerRef = useRef(null);
   const geojsonCache = useRef({ provinces: null, districts: null, wards: null });
   const prevRegionRef = useRef(selectedRegion);
-  const [loading, setLoading] = useState(true);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -93,15 +95,17 @@ export default function MapView({
       zoomControl: false
     });
 
-    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-    // Dark Canvas basemap (Esri Dark Gray Base)
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    const tileUrl = theme === 'dark'
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+    tileLayerRef.current = L.tileLayer(tileUrl, {
       attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
       maxZoom: 16
     }).addTo(map);
 
-    // Custom panes for clean stacking order
     if (!map.getPane('provincesPane')) {
       const pPane = map.createPane('provincesPane');
       pPane.style.zIndex = 400;
@@ -116,8 +120,6 @@ export default function MapView({
     }
 
     mapRef.current = map;
-
-    // Load provinces GeoJSON from backend
     loadProvincesGeoJSON();
 
     return () => {
@@ -126,16 +128,27 @@ export default function MapView({
     };
   }, []);
 
+  // Sync Basemap on theme change
+  useEffect(() => {
+    if (!mapRef.current || !tileLayerRef.current) return;
+    const tileUrl = theme === 'dark'
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+    tileLayerRef.current.setUrl(tileUrl);
+
+    if (geojsonCache.current.provinces) {
+      renderProvincesLayer(geojsonCache.current.provinces, selectedMetric, selectedRegion);
+    }
+  }, [theme]);
+
   const loadProvincesGeoJSON = async () => {
     try {
-      setLoading(true);
       const res = await api.getProvincesGeoJSON();
       geojsonCache.current.provinces = res.data;
       renderProvincesLayer(res.data, selectedMetric, selectedRegion);
     } catch (err) {
       console.error('Failed to load provinces GeoJSON:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -153,38 +166,38 @@ export default function MapView({
       provincesBgLayerRef.current = null;
     }
 
-    // 1. If a region is filtered, render non-matching provinces as subtle dark background
+    const isDark = theme === 'dark';
+    const borderColor = isDark ? '#ffffff' : '#ffffff';
+    const bgFill = isDark ? '#1e293b' : '#cbd5e1';
+
     if (region) {
       const bgLayer = L.geoJSON(geojson, {
         pane: 'provincesPane',
         filter: (feature) => feature.properties.region !== region,
         style: {
-          fillColor: '#0f172a',
-          fillOpacity: 0.35,
+          fillColor: bgFill,
           weight: 0.8,
-          color: '#334155',
-          opacity: 0.5
+          opacity: 0.5,
+          color: borderColor,
+          fillOpacity: 0.25
         },
         interactive: false
       });
-      if (activeLayers.provinces) {
-        bgLayer.addTo(map);
-      }
+      bgLayer.addTo(map);
       provincesBgLayerRef.current = bgLayer;
     }
 
-    // 2. Active choropleth layer for matching provinces
     const layer = L.geoJSON(geojson, {
       pane: 'provincesPane',
-      filter: (feature) => !region || feature.properties.region === region,
+      filter: (feature) => (!region ? true : feature.properties.region === region),
       style: (feature) => {
         const val = feature.properties[metric];
         return {
           fillColor: getColor(val, metric),
-          weight: region ? 1.6 : 1.2,
-          opacity: 0.9,
-          color: '#ffffff',
-          fillOpacity: 0.8
+          weight: 1.5,
+          opacity: 0.95,
+          color: borderColor,
+          fillOpacity: 0.88
         };
       },
       onEachFeature: (feature, l) => {
@@ -193,33 +206,33 @@ export default function MapView({
           mouseover: (e) => {
             const tgt = e.target;
             tgt.setStyle({
-              weight: 2.5,
-              color: '#00e5ff',
-              fillOpacity: 0.95
+              weight: 3.5,
+              color: '#000000',
+              fillOpacity: 1
             });
             tgt.bringToFront();
 
             tgt.bindTooltip(`
-              <div style="font-family: inherit; font-size: 12px; line-height: 1.4; color: #f8fafc; padding: 4px;">
-                <div style="font-weight: 700; font-size: 14px; color: #38bdf8; margin-bottom: 2px;">
+              <div style="font-family: inherit; font-size: 12px; line-height: 1.5; padding: 2px;">
+                <div style="font-weight: 800; font-size: 14px; color: ${getColor(p[metric], metric)}; margin-bottom: 2px;">
                   ${p.name || ''}
                 </div>
-                <div style="color: #94a3b8; font-size: 11px; margin-bottom: 6px;">${p.region || ''}</div>
-                <div style="display: flex; justify-content: space-between; gap: 12px;">
-                  <span>Điểm Thị Trường:</span>
-                  <strong style="color: #ef4444;">${p.market_score || 0} / 100</strong>
+                <div style="color: #64748b; font-size: 11px; margin-bottom: 6px;">Vùng: <strong>${p.region || ''}</strong></div>
+                <div style="display: flex; justify-content: space-between; gap: 16px; margin-bottom: 3px;">
+                  <span>Điểm tiềm năng:</span>
+                  <strong style="color: #dc2626; font-size: 13px;">${p.market_score || 0} / 100</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; gap: 12px;">
-                  <span>Dân số:</span>
+                <div style="display: flex; justify-content: space-between; gap: 16px; margin-bottom: 3px;">
+                  <span>Quy mô dân số:</span>
                   <strong>${Number(p.population || 0).toLocaleString()} ng</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; gap: 12px;">
-                  <span>Thu nhập b/q:</span>
-                  <strong style="color: #4ade80;">${p.per_capita_income_million_vnd || 0} tr.đ/th</strong>
+                <div style="display: flex; justify-content: space-between; gap: 16px; margin-bottom: 3px;">
+                  <span>Thu nhập bình quân:</span>
+                  <strong style="color: #10b981;">${p.per_capita_income_million_vnd || 0} tr.đ/th</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; gap: 16px;">
                   <span>Chỉ số TMĐT:</span>
-                  <strong style="color: #c084fc;">${p.ecommerce_index || 0}</strong>
+                  <strong style="color: #6366f1;">${p.ecommerce_index || 0} EBI</strong>
                 </div>
               </div>
             `, {
@@ -232,9 +245,9 @@ export default function MapView({
             const val = feature.properties[metric];
             tgt.setStyle({
               fillColor: getColor(val, metric),
-              weight: region ? 1.6 : 1.2,
-              color: '#ffffff',
-              fillOpacity: 0.8
+              weight: 1.5,
+              color: borderColor,
+              fillOpacity: 0.88
             });
           },
           click: () => {
@@ -251,7 +264,6 @@ export default function MapView({
     }
     provincesLayerRef.current = layer;
 
-    // Handle smooth camera movement when region changes
     if (prevRegionRef.current !== region) {
       if (region && layer.getLayers().length > 0) {
         const bounds = layer.getBounds();
@@ -275,65 +287,29 @@ export default function MapView({
       districtsLayerRef.current = null;
     }
 
-    const baseStyle = isProvincesOn
-      ? {
-          color: 'rgba(255, 255, 255, 0.75)',
-          weight: 1.2,
-          dashArray: '3, 3',
-          fillColor: '#00e5ff',
-          fillOpacity: 0.05,
-          opacity: 0.85
-        }
-      : {
-          color: '#00e5ff',
-          weight: 1.4,
-          dashArray: '',
-          fillColor: '#0284c7',
-          fillOpacity: 0.25,
-          opacity: 0.95
-        };
+    const baseStyle = {
+      color: '#334155',
+      weight: 1.2,
+      dashArray: '3, 3',
+      fillColor: '#3b82f6',
+      fillOpacity: 0.05,
+      opacity: 0.8
+    };
 
     const dLayer = L.geoJSON(geojson, {
       pane: 'districtsPane',
-      filter: (feature) => {
-        if (!region) return true;
-        return feature.properties.region === region;
-      },
+      filter: (feature) => (!region ? true : feature.properties.region === region),
       style: () => baseStyle,
       onEachFeature: (feat, l) => {
         const p = feat.properties;
         l.on({
           mouseover: (e) => {
             const tgt = e.target;
-            tgt.setStyle({
-              weight: 2.8,
-              color: isProvincesOn ? '#38bdf8' : '#fbbf24',
-              dashArray: '',
-              fillColor: isProvincesOn ? '#38bdf8' : '#f59e0b',
-              fillOpacity: 0.45
-            });
+            tgt.setStyle({ weight: 2.2, color: '#f59e0b', fillOpacity: 0.25 });
             tgt.bringToFront();
-
-            tgt.bindTooltip(`
-              <div style="font-family: inherit; font-size: 12px; line-height: 1.4; color: #f8fafc; padding: 4px;">
-                <div style="font-weight: 700; font-size: 14px; color: #38bdf8; margin-bottom: 2px;">
-                  ${p.name || ''}
-                </div>
-                <div style="color: #94a3b8; font-size: 11px; margin-bottom: 4px;">
-                  ${p.province_name ? `Thuộc: ${p.province_name}` : 'Quận / Huyện'} ${p.region ? `• ${p.region}` : ''}
-                </div>
-                <div style="font-size: 11px; color: #cbd5e1;">
-                  Cấp hành chính: <strong style="color: #f59e0b;">Quận / Huyện</strong>
-                </div>
-              </div>
-            `, {
-              sticky: true,
-              className: 'custom-leaflet-tooltip'
-            }).openTooltip();
           },
           mouseout: (e) => {
-            const tgt = e.target;
-            tgt.setStyle(baseStyle);
+            e.target.setStyle(baseStyle);
           },
           click: () => {
             if (l.getBounds && l.getBounds().isValid()) {
@@ -361,58 +337,16 @@ export default function MapView({
     }
 
     const baseStyle = {
-      color: '#c084fc',
-      weight: 1.0,
+      color: '#8b5cf6',
+      weight: 0.8,
       fillColor: '#8b5cf6',
-      fillOpacity: 0.28,
-      opacity: 0.85
+      fillOpacity: 0.08,
+      opacity: 0.7
     };
 
     const wLayer = L.geoJSON(geojson, {
       pane: 'wardsPane',
-      style: () => baseStyle,
-      onEachFeature: (feat, l) => {
-        const p = feat.properties;
-        l.on({
-          mouseover: (e) => {
-            const tgt = e.target;
-            tgt.setStyle({
-              weight: 2.5,
-              color: '#f43f5e',
-              fillColor: '#f43f5e',
-              fillOpacity: 0.5
-            });
-            tgt.bringToFront();
-
-            tgt.bindTooltip(`
-              <div style="font-family: inherit; font-size: 12px; line-height: 1.4; color: #f8fafc; padding: 4px;">
-                <div style="font-weight: 700; font-size: 13px; color: #c084fc; margin-bottom: 2px;">
-                  ${p.ward_type || 'Xã/Phường'} ${p.name || ''}
-                </div>
-                <div style="color: #94a3b8; font-size: 11px; margin-bottom: 4px;">
-                  ${p.province_name ? `Thuộc: ${p.province_name}` : ''}
-                </div>
-                <div style="font-size: 11px; color: #cbd5e1;">
-                  Dân số: <strong style="color: #38bdf8;">${Number(p.population || 0).toLocaleString()} ng</strong>
-                </div>
-                ${p.density ? `<div style="font-size: 11px; color: #cbd5e1;">Mật độ: <strong>${Number(p.density).toLocaleString()} ng/km²</strong></div>` : ''}
-              </div>
-            `, {
-              sticky: true,
-              className: 'custom-leaflet-tooltip'
-            }).openTooltip();
-          },
-          mouseout: (e) => {
-            const tgt = e.target;
-            tgt.setStyle(baseStyle);
-          },
-          click: () => {
-            if (l.getBounds && l.getBounds().isValid()) {
-              map.fitBounds(l.getBounds(), { padding: [50, 50], maxZoom: 14, animate: true });
-            }
-          }
-        });
-      }
+      style: () => baseStyle
     });
 
     if (activeLayers.wards) {
@@ -421,19 +355,16 @@ export default function MapView({
     wardsLayerRef.current = wLayer;
   };
 
-  // Update styles when metric or region changes
   useEffect(() => {
     if (geojsonCache.current.provinces) {
       renderProvincesLayer(geojsonCache.current.provinces, selectedMetric, selectedRegion);
     }
   }, [selectedMetric, selectedRegion]);
 
-  // Handle Layer toggles (provinces, districts, wards) and region filter
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !window.L) return;
 
-    // 1. Provinces
     if (provincesLayerRef.current) {
       if (activeLayers.provinces) {
         if (!map.hasLayer(provincesLayerRef.current)) provincesLayerRef.current.addTo(map);
@@ -444,7 +375,6 @@ export default function MapView({
       }
     }
 
-    // 2. Districts
     if (activeLayers.districts) {
       if (!geojsonCache.current.districts) {
         api.getDistrictsGeoJSON().then((res) => {
@@ -458,7 +388,6 @@ export default function MapView({
       map.removeLayer(districtsLayerRef.current);
     }
 
-    // 3. Wards
     if (activeLayers.wards) {
       if (!geojsonCache.current.wards) {
         api.getWardsGeoJSON().then((res) => {
@@ -473,38 +402,37 @@ export default function MapView({
     }
   }, [activeLayers, selectedRegion]);
 
-  // Handle focus fly-to from search
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !focusLocation) return;
-
     const { lon, lat, zoom = 9 } = focusLocation;
     if (lon && lat) {
-      map.flyTo([lat, lon], zoom, {
-        animate: true,
-        duration: 1.2
-      });
+      map.flyTo([lat, lon], zoom, { animate: true, duration: 1.2 });
     }
   }, [focusLocation]);
 
   const currentConf = METRIC_CONFIG[selectedMetric] || METRIC_CONFIG.market_score;
 
   return (
-    <div className="map-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <div ref={mapContainer} style={{ width: '100%', height: '100%', zIndex: 1 }} />
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+      <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
 
-      {/* Floating Metric Legend */}
-      <div className="map-legend">
-        <div className="legend-title">{currentConf.label}</div>
-        <div className="legend-scale">
+      {/* Weather-Radar Style GIS Legend */}
+      <div className="radar-legend">
+        <div className="radar-legend-title">
+          <span>{currentConf.label}</span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--brand)' }}>{currentConf.unit}</span>
+        </div>
+        <div className="radar-gradient-bar">
           {currentConf.colors.map((c, i) => (
-            <div key={i} style={{ flex: 1, backgroundColor: c }} />
+            <div key={i} className="radar-gradient-step" style={{ backgroundColor: c }} />
           ))}
         </div>
-        <div className="legend-labels">
-          <span>Thấp</span>
-          <span>{currentConf.unit}</span>
-          <span>Cao</span>
+        <div className="radar-ticks">
+          <span>Thấp (Lam)</span>
+          <span>Trung Bình (Lục)</span>
+          <span>Khá (Vàng)</span>
+          <span>Cao Nhất (Đỏ)</span>
         </div>
       </div>
     </div>

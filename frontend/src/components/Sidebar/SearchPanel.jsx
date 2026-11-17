@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search as SearchIcon, MapPin, Building2, Home, X, Compass } from 'lucide-react';
+import { Search as SearchIcon, MapPin, Building2, Home, X } from 'lucide-react';
 import { api } from '../../api/client';
 
 export default function SearchPanel({ onSelectLocation }) {
@@ -48,9 +48,9 @@ export default function SearchPanel({ onSelectLocation }) {
   };
 
   const getIcon = (type) => {
-    if (type === 'province') return <Building2 size={15} color="#00e5ff" />;
-    if (type === 'district') return <MapPin size={15} color="#f59e0b" />;
-    return <Home size={15} color="#10b981" />;
+    if (type === 'province') return <Building2 size={15} style={{ color: 'var(--brand-primary)' }} />;
+    if (type === 'district') return <MapPin size={15} style={{ color: 'var(--accent-warning)' }} />;
+    return <Home size={15} style={{ color: 'var(--accent-success)' }} />;
   };
 
   const getTypeLabel = (type) => {
@@ -79,7 +79,7 @@ export default function SearchPanel({ onSelectLocation }) {
               right: 12,
               background: 'transparent',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--text-tertiary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center'
@@ -94,8 +94,8 @@ export default function SearchPanel({ onSelectLocation }) {
               right: 12,
               fontFamily: 'var(--font-mono)',
               fontSize: '0.62rem',
-              color: '#64748b',
-              background: 'rgba(255, 255, 255, 0.05)',
+              color: 'var(--text-tertiary)',
+              background: 'var(--bg-surface-secondary)',
               border: '1px solid var(--border-subtle)',
               borderRadius: 4,
               padding: '1px 5px',
@@ -125,7 +125,7 @@ export default function SearchPanel({ onSelectLocation }) {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {item.market_score > 0 && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#00e5ff', fontWeight: 700 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--brand-primary)', fontWeight: 700 }}>
                     {item.market_score} đ
                   </span>
                 )}

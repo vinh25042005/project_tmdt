@@ -41,23 +41,32 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
           width: '840px',
           maxHeight: '85vh',
           height: 'auto',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--border-medium)',
-          boxShadow: 'var(--shadow-hud)',
-          animation: 'fadeIn 0.2s ease-out'
+          borderRadius: 'var(--radius-xl)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-lg)',
+          animation: 'fadeIn 0.18s ease-out'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(0, 229, 255, 0.1)', border: '1px solid rgba(0, 229, 255, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <ArrowRightLeft size={16} color="#00e5ff" />
+            <div style={{ 
+              width: 34, 
+              height: 34, 
+              borderRadius: 'var(--radius-md)', 
+              background: 'var(--brand-light)', 
+              color: 'var(--brand-primary)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <ArrowRightLeft size={16} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
                 Đối Sánh Đa Chiều Các Thị Trường
               </h3>
-              <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
                 So sánh song song các chỉ số vĩ mô và hạ tầng số giữa các địa bàn được chọn
               </div>
             </div>
@@ -65,7 +74,7 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'var(--bg-surface-secondary)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '50%',
               width: 32,
@@ -73,7 +82,7 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               cursor: 'pointer'
             }}
           >
@@ -88,18 +97,18 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
                 <th style={{ width: 200 }}>Chỉ Số Thị Trường</th>
                 {data.map((p, idx) => (
                   <th key={`hdr-${p.province_code}-${idx}`} style={{ textAlign: 'center', minWidth: 160 }}>
-                    <div style={{ fontWeight: 700, color: '#00e5ff', fontSize: '0.86rem' }}>{p.name}</div>
-                    <div style={{ fontSize: '0.68rem', color: '#64748b' }}>{p.region}</div>
+                    <div style={{ fontWeight: 700, color: 'var(--brand-primary)', fontSize: '0.86rem' }}>{p.name}</div>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{p.region}</div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style={{ fontWeight: 600, color: '#f8fafc' }}>Điểm Tiềm Năng</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Điểm Tiềm Năng</td>
                 {data.map((p, idx) => (
-                  <td key={`score-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#f59e0b', fontSize: '1rem' }}>
-                    {p.market_score} <span style={{ fontSize: '0.7rem', color: '#64748b' }}>/ 100</span>
+                  <td key={`score-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: 800, color: 'var(--accent-warning)', fontSize: '1rem' }}>
+                    {p.market_score} <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>/ 100</span>
                   </td>
                 ))}
               </tr>
@@ -130,7 +139,7 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
               <tr>
                 <td style={{ fontWeight: 600 }}>Thu nhập b/q tháng</td>
                 {data.map((p, idx) => (
-                  <td key={`inc-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#10b981', fontWeight: 700 }}>
+                  <td key={`inc-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-success)', fontWeight: 700 }}>
                     {p.per_capita_income_million_vnd} tr.đ
                   </td>
                 ))}
@@ -146,7 +155,7 @@ export default function ComparisonModal({ provinceCodes = [], onClose }) {
               <tr>
                 <td style={{ fontWeight: 600 }}>Chỉ số TMĐT (EBI)</td>
                 {data.map((p, idx) => (
-                  <td key={`ebi-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#c084fc', fontWeight: 700 }}>
+                  <td key={`ebi-${p.province_code}-${idx}`} style={{ textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)', fontWeight: 700 }}>
                     {p.ecommerce_index} EBI
                   </td>
                 ))}
