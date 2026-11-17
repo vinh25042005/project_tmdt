@@ -1,0 +1,64 @@
+province_code,province_name,ascii_name,region,population,area_km2,population_density,urban_pct,median_age,household_count
+01,Hà Nội,Ha Noi city,Đồng bằng sông Hồng,8587000,3359.8,2555.8,49.3,32.5,2385278
+79,TP. Hồ Chí Minh,Ho Chi Minh city,Đông Nam Bộ,9456000,2061.2,4587.6,79.2,32.5,2626667
+31,Hải Phòng,Hai Phong city,Đồng bằng sông Hồng,2110000,1561.8,1351.0,46.5,32.5,586111
+48,Đà Nẵng,Da Nang city,Bắc Trung Bộ & Duyên hải miền Trung,1235000,1284.9,961.2,87.2,32.5,343056
+92,Cần Thơ,Can Tho city,Đồng bằng sông Cửu Long,1252000,1440.4,869.2,70.3,32.5,347778
+74,Bình Dương,Binh Duong,Đông Nam Bộ,2832000,2694.7,1051.0,84.4,32.5,786667
+75,Đồng Nai,Dong Nai,Đông Nam Bộ,3302000,5863.6,563.1,44.2,32.5,917222
+77,Bà Rịa - Vũng Tàu,Ba Ria - Vung Tau,Đông Nam Bộ,1195000,1982.6,602.7,58.5,32.5,331944
+27,Bắc Ninh,Bac Ninh,Đồng bằng sông Hồng,1502000,822.7,1825.7,39.5,32.5,417222
+22,Quảng Ninh,Quang Ninh,Đồng bằng sông Hồng,1370000,6178.2,221.7,68.2,32.5,380556
+30,Hải Dương,Hai Duong,Đồng bằng sông Hồng,1950000,1668.2,1168.9,32.5,32.5,541667
+33,Hưng Yên,Hung Yen,Đồng bằng sông Hồng,1300000,930.2,1397.5,21.0,32.5,361111
+26,Vĩnh Phúc,Vinh Phuc,Đồng bằng sông Hồng,1205000,1236.0,974.9,31.2,32.5,334722
+34,Thái Bình,Thai Binh,Đồng bằng sông Hồng,1885000,1586.4,1188.2,11.2,32.5,523611
+35,Hà Nam,Ha Nam,Đồng bằng sông Hồng,880000,861.9,1021.0,17.5,32.5,244444
+36,Nam Định,Nam Dinh,Đồng bằng sông Hồng,1800000,1668.6,1078.7,19.8,32.5,500000
+37,Ninh Bình,Ninh Binh,Đồng bằng sông Hồng,1015000,1411.8,718.9,22.1,32.5,281944
+38,Thanh Hóa,Thanh Hoa,Bắc Trung Bộ & Duyên hải miền Trung,3740000,11114.7,336.5,15.6,32.5,1038889
+40,Nghệ An,Nghe An,Bắc Trung Bộ & Duyên hải miền Trung,3445000,16486.5,209.0,15.2,32.5,956944
+42,Hà Tĩnh,Ha Tinh,Bắc Trung Bộ & Duyên hải miền Trung,1310000,5994.4,218.5,19.5,32.5,363889
+44,Quảng Bình,Quang Binh,Bắc Trung Bộ & Duyên hải miền Trung,915000,8000.0,114.4,21.8,32.5,254167
+45,Quảng Trị,Quang Tri,Bắc Trung Bộ & Duyên hải miền Trung,655000,4740.0,138.2,31.5,32.5,181944
+46,Thừa Thiên - Huế,Thua Thien - Hue,Bắc Trung Bộ & Duyên hải miền Trung,1165000,4947.1,235.5,54.0,32.5,323611
+49,Quảng Nam,Quang Nam,Bắc Trung Bộ & Duyên hải miền Trung,1520000,10574.9,143.7,26.5,32.5,422222
+51,Quảng Ngãi,Quang Ngai,Bắc Trung Bộ & Duyên hải miền Trung,1250000,5155.8,242.4,17.2,32.5,347222
+52,Bình Định,Binh Dinh,Bắc Trung Bộ & Duyên hải miền Trung,1510000,6071.3,248.7,32.0,32.5,419444
+54,Phú Yên,Phu Yen,Bắc Trung Bộ & Duyên hải miền Trung,880000,5023.4,175.2,30.5,32.5,244444
+56,Khánh Hòa,Khanh Hoa,Bắc Trung Bộ & Duyên hải miền Trung,1255000,5137.8,244.3,44.5,32.5,348611
+58,Ninh Thuận,Ninh Thuan,Bắc Trung Bộ & Duyên hải miền Trung,600000,3356.3,178.8,36.2,32.5,166667
+60,Bình Thuận,Binh Thuan,Bắc Trung Bộ & Duyên hải miền Trung,1250000,7942.5,157.4,38.5,32.5,347222
+62,Kon Tum,Kon Tum,Tây Nguyên,580000,9677.3,59.9,32.5,32.5,161111
+64,Gia Lai,Gia Lai,Tây Nguyên,1600000,15511.0,103.2,29.0,32.5,444444
+66,Đắk Lắk,Dak Lak,Tây Nguyên,1920000,13070.4,146.9,25.5,32.5,533333
+67,Đắk Nông,Dak Nong,Tây Nguyên,680000,6509.3,104.5,16.0,32.5,188889
+68,Lâm Đồng,Lam Dong,Tây Nguyên,1335000,9781.2,136.5,40.2,32.5,370833
+70,Bình Phước,Binh Phuoc,Đông Nam Bộ,1035000,6873.6,150.6,24.5,32.5,287500
+72,Tây Ninh,Tay Ninh,Đông Nam Bộ,1190000,4041.7,294.4,24.0,32.5,330556
+80,Long An,Long An,Đồng bằng sông Cửu Long,1780000,4494.9,396.0,16.5,32.5,494444
+82,Tiền Giang,Tien Giang,Đồng bằng sông Cửu Long,1785000,2510.6,711.0,15.0,32.5,495833
+83,Bến Tre,Ben Tre,Đồng bằng sông Cửu Long,1300000,2394.8,542.8,10.2,32.5,361111
+84,Trà Vinh,Tra Vinh,Đồng bằng sông Cửu Long,1020000,2358.3,432.5,17.5,32.5,283333
+86,Vĩnh Long,Vinh Long,Đồng bằng sông Cửu Long,1030000,1525.7,675.1,17.0,32.5,286111
+87,Đồng Tháp,Dong Thap,Đồng bằng sông Cửu Long,1610000,3383.8,475.8,19.5,32.5,447222
+89,An Giang,An Giang,Đồng bằng sông Cửu Long,1920000,3536.8,542.9,32.0,32.5,533333
+91,Kiên Giang,Kien Giang,Đồng bằng sông Cửu Long,1750000,6352.0,275.5,28.5,32.5,486111
+93,Hậu Giang,Hau Giang,Đồng bằng sông Cửu Long,735000,1622.5,453.0,26.5,32.5,204167
+94,Sóc Trăng,Soc Trang,Đồng bằng sông Cửu Long,1205000,3311.9,363.8,32.5,32.5,334722
+95,Bạc Liêu,Bac Lieu,Đồng bằng sông Cửu Long,920000,2667.9,344.8,28.0,32.5,255556
+96,Cà Mau,Ca Mau,Đồng bằng sông Cửu Long,1210000,5221.2,231.7,23.0,32.5,336111
+02,Hà Giang,Ha Giang,Trung du và miền núi phía Bắc,895000,7929.5,112.9,16.0,32.5,248611
+04,Cao Bằng,Cao Bang,Trung du và miền núi phía Bắc,545000,6700.3,81.3,24.5,32.5,151389
+06,Bắc Kạn,Bac Kan,Trung du và miền núi phía Bắc,325000,4859.4,66.9,22.0,32.5,90278
+08,Tuyên Quang,Tuyen Quang,Trung du và miền núi phía Bắc,805000,5867.9,137.2,14.5,32.5,223611
+10,Lào Cai,Lao Cai,Trung du và miền núi phía Bắc,765000,6364.0,120.2,24.5,32.5,212500
+11,Điện Biên,Dien Bien,Trung du và miền núi phía Bắc,635000,9541.3,66.6,15.0,32.5,176389
+12,Lai Châu,Lai Chau,Trung du và miền núi phía Bắc,485000,9068.8,53.5,18.0,32.5,134722
+14,Sơn La,Son La,Trung du và miền núi phía Bắc,1300000,14123.6,92.0,14.5,32.5,361111
+15,Yên Bái,Yen Bai,Trung du và miền núi phía Bắc,845000,6887.5,122.7,20.5,32.5,234722
+17,Hòa Bình,Hoa Binh,Trung du và miền núi phía Bắc,875000,4590.6,190.6,16.0,32.5,243056
+19,Thái Nguyên,Thai Nguyen,Trung du và miền núi phía Bắc,1340000,3526.6,380.0,36.5,32.5,372222
+20,Lạng Sơn,Lang Son,Trung du và miền núi phía Bắc,800000,8310.2,96.3,20.5,32.5,222222
+24,Bắc Giang,Bac Giang,Trung du và miền núi phía Bắc,1900000,3895.6,487.7,14.0,32.5,527778
+25,Phú Thọ,Phu Tho,Trung du và miền núi phía Bắc,1510000,3534.6,427.2,18.5,32.5,419444

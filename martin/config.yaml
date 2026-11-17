@@ -1,0 +1,12 @@
+# Martin tile server configuration
+srv:
+  keep_alive: 75
+  listen_addresses: '0.0.0.0:3000'
+
+postgres:
+  connection_string: "postgresql://docker:docker@db:5432/gis"
+  auto_publish:
+    tables:
+      from_schemas:
+        - public
+      id_format: "{table}"
