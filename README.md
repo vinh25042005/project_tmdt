@@ -1,37 +1,37 @@
 # Vietnam Market Intelligence Platform (VN-MarketMap)
 
-Hệ thống phân tích bản đồ số thấu hiểu thị trường và nhu cầu khách hàng Việt Nam — Chạy full trên **Docker**.
+Hệ thống phân tích bản đồ số thấu hiểu thị trường và nhu cầu khách hàng Việt Nam .
 
 ---
 
 ## 🚀 Điểm Nổi Bật
 
-- **Bản đồ số đa tầng (Digital Map Layers)**:
-  - Cấp Quốc gia (Country)
-  - 63 Tỉnh/Thành phố (Provinces - kèm Quần đảo Hoàng Sa & Trường Sa)
-  - 708 Quận/Huyện/Thị xã (Districts)
-  - Hàng nghìn Xã/Phường/Thị trấn (Wards/Communes)
+- **Bản đồ số đa tầng**:
+  - Cấp Quốc gia 
+  - 63 Tỉnh/Thành phố 
+  - 708 Quận/Huyện/Thị xã 
+  - Hàng nghìn Xã/Phường/Thị trấn
 - **Dữ liệu Dân số & Kinh tế tích hợp**:
   - Dân số, diện tích, mật độ dân số, tỷ lệ đô thị hóa
   - Tổng sản phẩm (GRDP), thu nhập bình quân/người/tháng, tổng mức bán lẻ
   - Chỉ số thương mại điện tử (E-commerce Index - EBI), tỷ lệ tiếp cận internet & smartphone
 - **Trực quan hóa (Visualization)**:
-  - Vector Tile Server hiệu năng cao (Martin) trực tiếp từ PostGIS
+  - Vector Tile Server hiệu năng cao trực tiếp từ PostGIS
   - Bản đồ Choropleth nhiều chỉ số (Điểm thị trường, Dân số, GRDP, Thu nhập, TMĐT, Mật độ)
-  - Tương tác di chuột (hover preview) và bấm chọn xem hồ sơ chi tiết (dossier)
-- **Tìm kiếm thông minh (Search)**:
-  - Tìm kiếm tiếng Việt có dấu/không dấu (unaccent + trigram)
-  - Tự động hoàn thành (autocomplete) và bay tới tọa độ trên bản đồ (fly-to)
-  - Tìm kiếm địa phương lân cận theo bán kính GPS (spatial nearby)
-- **Hỗ trợ ra quyết định (Decision Support - MCDA)**:
-  - Thuật toán chấm điểm tiềm năng thị trường (Market Potential Score 0-100)
+  - Tương tác di chuột và bấm chọn xem hồ sơ chi tiết 
+- **Tìm kiếm thông minh**:
+  - Tìm kiếm tiếng Việt có dấu/không dấu
+  - Tự động hoàn thành và bay tới tọa độ trên bản đồ 
+  - Tìm kiếm địa phương lân cận theo bán kính GPS 
+- **Hỗ trợ ra quyết định **:
+  - Thuật toán chấm điểm tiềm năng thị trường 
   - Tùy chỉnh trọng số theo mô hình kinh doanh (TMĐT / FMCG / Hàng cao cấp)
   - Phân tầng thị trường (Tier 1 Trọng điểm, Tier 2 Đang phát triển, Tier 3 Tiềm năng dài hạn)
   - Gợi ý chiến lược mở rộng và ngành hàng phù hợp
 
 ---
 
-## 🏗️ Kiến Trúc Hệ Thống (Docker Stack)
+## 🏗️ Kiến Trúc Hệ Thống 
 
 | Service | Container Name | Port | Công nghệ | Nhiệm vụ |
 |---|---|---|---|---|
@@ -48,7 +48,7 @@ Hệ thống phân tích bản đồ số thấu hiểu thị trường và nhu 
 ### Yêu cầu
 - Đã cài đặt [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/)
 
-### 1 Lệnh duy nhất để khởi động toàn bộ:
+### chạy docker compose:
 ```bash
 docker compose up --build -d
 ```
